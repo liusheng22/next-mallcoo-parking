@@ -1,0 +1,19 @@
+.line {
+  position: relative;
+}
+.line::after {
+  content: '';
+  position: absolute;
+  top: 22px;
+  left: 10px;
+  width: 2px;
+  height: 4.5em;
+  background-color: #FFF;
+}
+.line:last-child::after {
+  display: none;
+}
+
+.paid::after {
+  background-color: #F8D26F;
+}

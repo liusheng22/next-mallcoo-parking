@@ -1,0 +1,17 @@
+@hostname = localhost
+@port = 3000
+@host = {{hostname}}:{{port}}
+@baseURL = http://{{host}}
+
+### account get
+get http://baidu.com/1
+
+
+### account post
+post {{baseUrl}}/api/account
+content-type: {{contentType}}
+
+{
+  "name": "sample",
+  "time": "Wed, 21 Oct 2015 18:27:50 GMT"
+}

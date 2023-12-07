@@ -1,0 +1,83 @@
+### account post
+post https://m.mallcoo.cn/api/hui/Promotion/GetProIndexList
+content-type: {{contentType}}
+
+{
+  "MallID": "11707",
+  "Type": "2",
+  "pageIndex": 1,
+  "pageSize": 10,
+  "dataType": 0,
+  "orderField": 1,
+  "Header": {
+    "Token": "4LccDiWtH0y3xXTDddprVA0Rj5rxObr0,16706",
+  }
+}
+
+### account post
+post https://m.mallcoo.cn/a/coupon/API/mycoupon/GetNotAboutToExpireCoupon
+content-type: {{contentType}}
+
+{
+  "MallID": "11707",
+  "Type": "2",
+  "pageIndex": 1,
+  "pageSize": 10,
+  "dataType": 0,
+  "orderField": 1,
+  "Header": {
+    "Token": "4LccDiWtH0y3xXTDddprVA0Rj5rxObr0,16706",
+  }
+}
+
+###
+get http://localhost:3000/api/mallcoo/hui
+
+###
+get http://localhost:3000/api/mallcoo/coupon
+
+
+###
+get http://localhost:3000/api/demo-api
+
+
+### 测试缴费 - get
+get http://localhost:3000/api/using?plateNo=川F5N0S2
+
+
+### 测试缴费 - post
+post http://localhost:3000/api/using
+
+
+###
+post https://m.mallcoo.cn/a/coupon/API/mycoupon/GetNotAboutToExpireCoupon
+content-type: {{contentType}}
+
+{
+  "MinID": 0,
+  "PageSize": 10,
+  "MallID": 12689,
+  "Header": {
+    "Token": "uOqHtiY6Ckq1iVCW-Vir6QrSoRsJTY8E,17464"
+  }
+}
+
+
+###
+post https://m.mallcoo.cn/api/park/ParkFee/GetParkFeeV3
+content-type: {{contentType}}
+
+{
+  "UID": "242997347",
+  "MallID": 12689,
+  "ParkID": 1550,
+  "PlateNo": "川F5N0S2",
+  "Barcode": "",
+  "FreeMinutes": 180,
+  "FreeAmount": 0,
+  "timetip": new Date().getTime(),
+  "Header": {
+    "Token": "uOqHtiY6Ckq1iVCW-Vir6QrSoRsJTY8E,17464"
+  }
+}
+
