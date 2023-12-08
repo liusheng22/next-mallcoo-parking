@@ -32,7 +32,6 @@ export const initAccount = async (mallInfo: any, isForce?: boolean) => {
       localDb.push(`.mallWithAccount.${mallId}`, mallConfig, false)
     }
   }
-
   return
 }
 

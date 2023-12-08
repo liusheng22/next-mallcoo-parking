@@ -42,7 +42,7 @@ const page: FC<pageProps> = async ({ params }) => {
   const mallConfig = (await db.getObjectDefault(
     `.mallWithAccount.${mallId}`
   )) as MallConfig
-  const { parkId, projectType } = mallConfig
+  const { parkId, projectType } = mallConfig || {}
   const { uid } = defaultAccountListByMall(mallId)
   const plateNo = decodeURIComponent(queryPlateNo).toUpperCase()
 
