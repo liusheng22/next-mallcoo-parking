@@ -67,7 +67,7 @@ const payment: (params: PaymentParams) => Promise<any> = async (params) => {
     EntryTime // 入场时间
   }
 
-  const rights = rightsFilter(rightsRuleModelList as any[], true)
+  const rights = rightsFilter(rightsRuleModelList as any[], false)
   console.log('优惠信息 =>', rights)
   if (!rights || !rights.RightsID) {
     payResMsg = '没有可用的优惠信息'

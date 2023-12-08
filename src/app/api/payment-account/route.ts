@@ -216,14 +216,6 @@ export async function POST(req: NextRequest) {
     RightsRuleModelList as any[],
     true
   )
-  // const list = RightsRuleModelList || []
-  // const ruleModel =
-  //   list.filter((item: any) => item.RuleName === '会员权益')[0] || {}
-  // const { RightsList } = ruleModel
-  // const rightsList = RightsList || []
-  // const rights =
-  //   rightsList.filter((item: any) => item.RightsType === 1)[0] || {}
-  // const { Minutes = 0, Amount = 0 } = rights
 
   const carConfig: CarConfig = {
     plateNo,
