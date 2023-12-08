@@ -1,0 +1,2 @@
+###
+get {{baseUrl}}/api/demo/info?mallId=11707

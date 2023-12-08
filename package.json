@@ -38,11 +38,9 @@
     "typescript": "5.2.2"
   },
   "devDependencies": {
+    "@sujian/eslint-config": "^1.0.3",
     "@types/cors": "^2.8.17",
-    "@types/node-schedule": "^2.1.4",
-    "eslint-config-wxb": "^1.0.2",
-    "eslint-config-wxb-basic": "^0.0.13",
-    "eslint-config-wxb-typescript": "^0.0.13"
+    "@types/node-schedule": "^2.1.4"
   },
   "presets": [
     [
