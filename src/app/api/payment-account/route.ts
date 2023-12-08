@@ -4,6 +4,7 @@ import { fetchDiscountCoreQuery } from '@/helper/payment/discount'
 import { fetchLoginForThirdV2 } from '@/helper/payment/login'
 import { fetchGetParkFeeInit } from '@/helper/payment/park-fee'
 import { failed, success } from '@/helper/response'
+import { rightsFilter } from '@/helper/rights-filter'
 import ScheduleHelper from '@/helper/schedule'
 import { AccountItem, CarConfig, PayInfo } from '@/types/ui'
 import { db, localDb } from '@/utils/db'
@@ -14,7 +15,7 @@ import { getQueryKey } from 'utils/api-route'
 
 // 自动支付任务
 const paymentSchedule = async (query: PayInfo) => {
-  const { plateNo, entryTime } = query
+  const { mallId, plateNo, entryTime } = query
   const schedule = new ScheduleHelper()
 
   const carConfig: CarConfig = await db.getObjectDefault(
@@ -38,11 +39,6 @@ const paymentSchedule = async (query: PayInfo) => {
       return
     }
 
-    // const { EntryTime } = await fetchGetParkFeeInit(account.uid, plateNo)
-    // 距离入场时间多少分钟
-    // const minutes = dayjs().diff(EntryTime, 'minute')
-    // 根据免费时长&入场时间，判断是否需要支付
-
     console.log('执行定时任务时间', dayjs().format('YYYY:MM:DD HH:mm:ss'))
     console.log('执行定时支付任务', {
       ...account,
@@ -62,6 +58,39 @@ const paymentSchedule = async (query: PayInfo) => {
     })
 
     if (!ok) {
+      // 如果支付失败，则index+1，继续执行下一个账号的支付
+      const nextIndex = index + 1
+      const nextAccount = usingList[nextIndex]
+      // 更新账号状态
+      const currentTime = dayjs().format('YYYY:MM:DD HH:mm:ss')
+      await localDb.push(
+        `.usingAccount.${plateNo}.list[${index}].isPaid`,
+        true,
+        true
+      )
+      await localDb.push(
+        `.usingAccount.${plateNo}.list[${index}].time`,
+        currentTime,
+        true
+      )
+      // 更新商场下的账号状态
+      const currentMallAccountList: AccountItem[] =
+        (await db.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
+      const paidIndex = currentMallAccountList.findIndex(
+        (item) => item.openId === account.openId
+      )
+      await localDb.push(
+        `.mallWithAccount.${mallId}.list[${paidIndex}].isPaid`,
+        true,
+        true
+      )
+      if (nextAccount) {
+        await paymentTask()
+      } else {
+        schedule.cancelTask(plateNo as string)
+        // 清空支付账号信息
+        await localDb.delete(`.usingAccount.${plateNo}`)
+      }
       return false
     }
 
@@ -75,6 +104,17 @@ const paymentSchedule = async (query: PayInfo) => {
     await localDb.push(
       `.usingAccount.${plateNo}.list[${index}].time`,
       currentTime,
+      true
+    )
+
+    const currentMallAccountList: AccountItem[] =
+      (await db.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
+    const paidIndex = currentMallAccountList.findIndex(
+      (item) => item.openId === account.openId
+    )
+    await localDb.push(
+      `.mallWithAccount.${mallId}.list[${paidIndex}].isPaid`,
+      true,
       true
     )
 
@@ -110,6 +150,7 @@ const paymentSchedule = async (query: PayInfo) => {
     }
   }
   addMin()
+  console.log('启动定时任务时间: ', dayjs(time).format('YYYY:MM:DD HH:mm:ss'))
   // const now = dayjs().valueOf()
   // if (time < now) {
   //   time = dayjs(time).add(min, 'minute').valueOf()
@@ -118,7 +159,6 @@ const paymentSchedule = async (query: PayInfo) => {
   schedule.createTask(
     {
       name: plateNo as string,
-      // schedule: `0 */${min} * * * *`,
       // schedule: new Date(Date.now() + 5000),
       // 在入场时间的基础上，+min 然后执行一次
       schedule: new Date(time),
@@ -171,14 +211,19 @@ export async function POST(req: NextRequest) {
     needPayAmount: NeedPayAmount,
     parkingMinutes: ParkingMinutes
   })
-  const list = RightsRuleModelList || []
-  const ruleModel =
-    list.filter((item: any) => item.RuleName === '会员权益')[0] || {}
-  const { RightsList } = ruleModel
-  const rightsList = RightsList || []
-  const rights =
-    rightsList.filter((item: any) => item.RightsType === 1)[0] || {}
-  const { Minutes = 0, Amount = 0 } = rights
+
+  const { Minutes = 0, Amount = 0 } = rightsFilter(
+    RightsRuleModelList as any[],
+    true
+  )
+  // const list = RightsRuleModelList || []
+  // const ruleModel =
+  //   list.filter((item: any) => item.RuleName === '会员权益')[0] || {}
+  // const { RightsList } = ruleModel
+  // const rightsList = RightsList || []
+  // const rights =
+  //   rightsList.filter((item: any) => item.RightsType === 1)[0] || {}
+  // const { Minutes = 0, Amount = 0 } = rights
 
   const carConfig: CarConfig = {
     plateNo,
@@ -200,10 +245,10 @@ export async function POST(req: NextRequest) {
   )
 
   const data = await paymentSchedule({
+    mallId,
     plateNo,
     entryTime
   })
-  console.log('🚀 ~ file: route.ts:206 ~ POST ~ data:', data)
 
   // 查询并领取优惠券
   const url = `/api/mallcoo/hui?mallId=${mallId}&plateNo=${plateNo}`
@@ -243,6 +288,31 @@ export async function DELETE(req: NextRequest) {
   // 取消定时任务
   const schedule = new ScheduleHelper()
   schedule.cancelTask(plateNo)
+
+  const carConfig: CarConfig =
+    (await db.getObjectDefault(`.usingAccount.${plateNo}`)) || {}
+  const { mallId, list: accountList } = carConfig
+  // 未支付的账号
+  const unpaidList = accountList.filter((item) => !item.isPaid)
+  // 更新商场下的账号状态
+  for (const item of unpaidList) {
+    const { openId } = item
+    const currentMallAccountList: AccountItem[] =
+      (await db.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
+    const paidIndex = currentMallAccountList.findIndex(
+      (item) => item.openId === openId
+    )
+    await localDb.push(
+      `.mallWithAccount.${mallId}.list[${paidIndex}].isPaid`,
+      false,
+      true
+    )
+    await localDb.push(
+      `.mallWithAccount.${mallId}.list[${paidIndex}].isSelected`,
+      false,
+      true
+    )
+  }
 
   await localDb.delete(`.usingAccount.${plateNo}`)
 

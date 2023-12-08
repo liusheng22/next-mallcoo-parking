@@ -1,4 +1,4 @@
-import { defaultAccountListByMall } from '@/constants'
+import { defaultAccountListByMall, mallInfo } from '@/constants'
 import { fetchGetProIndexList, fetchReceiveCoupon } from '@/helper/payment/hui'
 import { fetchLoginForThirdV2 } from '@/helper/payment/login'
 import { success } from '@/helper/response'
@@ -20,17 +20,21 @@ export async function GET(req: NextRequest) {
 
   const mallId = getQueryKey(req, 'mallId') as string
   const plateNo = getQueryKey(req, 'plateNo') as string
+  const queryOpenId = getQueryKey(req, 'openId') as string
+  const { projectType } = mallInfo(mallId)
   const { openId } = defaultAccountListByMall(mallId)
   const { Token: token } = await fetchLoginForThirdV2({ openId, mallId })
   const { PromotionModelList = [] } = await fetchGetProIndexList({
     mallId,
-    token
+    token,
+    projectType
   })
   // POST(PromotionModelList)
-  fetcher({
+  await fetcher({
     url: '/api/mallcoo/hui',
     method: 'POST',
     data: {
+      openId: queryOpenId,
       plateNo,
       list: PromotionModelList
     }
@@ -40,16 +44,23 @@ export async function GET(req: NextRequest) {
 
 // 领取优惠券
 export async function POST(req: NextRequest) {
-  const { plateNo, list = [] } = (await req.json()) || {}
-  const accountList = (await db.getObjectDefault(
-    `.usingAccount.${plateNo}.list`
-  )) as AccountItem[]
-  for (const account of accountList) {
-    const { openId } = account
+  const { openId: queryOpenId, plateNo, list = [] } = (await req.json()) || {}
+  const accountList: AccountItem[] =
+    (await db.getObjectDefault(`.usingAccount.${plateNo}.list`)) || []
+  if (queryOpenId) {
+    // 某些优惠券需要领取两次
     for (const item of list) {
-      // 某些优惠券需要领取两次
-      await fetchReceiveCoupon({ ...item, openId })
-      await fetchReceiveCoupon({ ...item, openId })
+      await fetchReceiveCoupon({ ...item, openId: queryOpenId })
+      await fetchReceiveCoupon({ ...item, openId: queryOpenId })
+    }
+  } else {
+    for (const account of accountList) {
+      const { openId } = account
+      for (const item of list) {
+        // 某些优惠券需要领取两次
+        await fetchReceiveCoupon({ ...item, openId })
+        await fetchReceiveCoupon({ ...item, openId })
+      }
     }
   }
 

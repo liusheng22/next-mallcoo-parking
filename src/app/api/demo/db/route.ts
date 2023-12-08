@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   const index = 0
   await localDb.push(
     `.usingAccount.${plateNo}.list[${index}].isPaid`,
-    false,
+    true,
     true
   )
   const currentTime = dayjs().format('YYYY-MM-DD HH:mm:ss')

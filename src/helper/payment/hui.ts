@@ -44,7 +44,7 @@ export const fetchReceiveCoupon: any = async (query: any) => {
   const params = {
     MallID: MallID,
     PromotionID: ID, // 优惠券ID
-    // RefIDList: 1259062,
+    RefIDList: 1259062,
     PromotionName: Name, // 优惠券Name
     Header: {
       Token: `${Token},${ProjectType}`

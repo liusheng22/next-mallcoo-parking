@@ -7,9 +7,9 @@ import { getQuery } from 'utils/api-route'
 import { db, localDb } from 'utils/db'
 
 export async function GET(req: NextRequest) {
-  console.log('---->>>>', getQuery(req))
   const { uid, plateNo, mallId, parkId } = getQuery(req)
 
+  // 查询待缴费信息，根据 EntryTime 判断是否车辆在场
   const data = await fetchGetParkFeeInit({
     uid,
     plateNo,

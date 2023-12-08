@@ -1,5 +1,9 @@
 import { MallcooData, PaymentParams } from '@/types/mallcoo'
-import { localDb } from 'utils/db'
+import { AccountItem } from '@/types/ui'
+import { fetcher } from 'app/composables/use-fetcher'
+import { db, localDb } from 'utils/db'
+import { sendFailNotify, sendSuccessNotify } from '../notify'
+import { rightsFilter } from '../rights-filter'
 import { fetchDiscountCoreQuery } from './discount'
 import { fetchLoginForThirdV2 } from './login'
 import { fetchGetParkFeeInit } from './park-fee'
@@ -40,6 +44,10 @@ const payment: (params: PaymentParams) => Promise<any> = async (params) => {
   const { NeedPayAmount, ParkingMinutes, ParkName, EntryTime } =
     parkFeeData || {}
 
+  // 查询并领取优惠券
+  const url = `/api/mallcoo/hui?mallId=${mallId}&plateNo=${plateNo}&openId=${openId}`
+  await fetcher({ url })
+
   // 获取优惠信息
   const discountData: MallcooData = await fetchDiscountCoreQuery({
     plateNo,
@@ -59,61 +67,101 @@ const payment: (params: PaymentParams) => Promise<any> = async (params) => {
     EntryTime // 入场时间
   }
 
-  console.log('parkingInfo =>', parkingInfo)
-  if (rightsRuleModelList && rightsRuleModelList.length) {
-    // return [
-    //   true,
-    //   {
-    //     uid,
-    //     plateNo,
-    //     loginForToken,
-    //     rightsRuleModelList
-    //   }
-    // ]
-
-    const payResult: MallcooData = await fetchPayFeeV31({
-      uid,
-      mallId,
-      parkId,
-      plateNo,
-      freeMin,
-      freeAmount,
-      projectType,
-      loginForToken,
-      rightsRuleModelList
+  const rights = rightsFilter(rightsRuleModelList as any[], true)
+  console.log('优惠信息 =>', rights)
+  if (!rights || !rights.RightsID) {
+    payResMsg = '没有可用的优惠信息'
+    sendFailNotify({
+      PayTimes: index + 1,
+      ...parkingInfo,
+      Remark: payResMsg
     })
+    return [false, { payResMsg }]
+  }
 
-    console.log('实际支付结果 =>', payResult)
+  // DEBUG: 打印支付信息
+  // return [
+  //   true,
+  //   {
+  //     uid,
+  //     plateNo,
+  //     loginForToken,
+  //     rightsRuleModelList
+  //   }
+  // ]
 
-    // payFail(parkingInfo, payResMsg)
+  const payResult: MallcooData = await fetchPayFeeV31({
+    uid,
+    mallId,
+    parkId,
+    plateNo,
+    freeMin,
+    freeAmount,
+    projectType,
+    loginForToken,
+    rights
+  })
 
-    const { OrderID } = payResult || {}
-    if (OrderID) {
-      console.log('支付成功🎉')
+  console.log('实际支付结果 =>', payResult)
+
+  const { OrderID } = payResult || {}
+  if (OrderID) {
+    console.log('支付成功🎉')
+    if (accountTotal) {
       console.log(
         `${plateNo}：第${index + 1}个账号支付成功，剩余${
           accountTotal - index - 1
         }个账号`
       )
 
-      // TODO: 清空支付账号信息
-      localDb.delete(`.usingAccount.${plateNo}`)
+      sendSuccessNotify({
+        PayTimes: index + 1,
+        ...parkingInfo
+      })
 
-      // sendSuccessNotify({
-      //   PayTimes: useAccountIndex + 1,
-      //   ...parkingInfo
-      // })
-      return [true, payResult]
+      // 清空支付账号信息
+      if (accountTotal - index - 1 === 0) {
+        console.log('所有账号支付完成，清空缓存')
+        localDb.delete(`.usingAccount.${plateNo}`)
+      }
     } else {
-      payResMsg = '支付结果失败'
-      // payFail(parkingInfo, payResMsg)
-      return [false, { payResMsg }]
+      sendSuccessNotify({
+        PayTimes: index + 1,
+        ...parkingInfo
+      })
+
+      // 更新该支付账号的信息
+      const currentMallAccountList: AccountItem[] =
+        (await db.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
+      const paidIndex = currentMallAccountList.findIndex(
+        (item) => item.openId === openId
+      )
+      await localDb.push(
+        `.mallWithAccount.${mallId}.list[${paidIndex}].isPaid`,
+        true,
+        true
+      )
     }
+
+    return [true, payResult]
   } else {
-    payResMsg = '支付信息获取失败'
-    // payFail(parkingInfo, payResMsg)
+    payResMsg = '支付结果失败'
+    sendFailNotify({
+      PayTimes: index + 1,
+      ...parkingInfo,
+      Remark: payResMsg
+    })
     return [false, { payResMsg }]
   }
+  // } else {
+  //   payResMsg = '支付信息获取失败'
+  //   sendFailNotify({
+  //     PayTimes: index + 1,
+  //     ...parkingInfo,
+  //     Remark: payResMsg
+  //   })
+  //   return [false, { payResMsg }]
+  // }
 }
 
 export default payment
