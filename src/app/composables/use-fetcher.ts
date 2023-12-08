@@ -1,14 +1,25 @@
 import { isObject, isUndefined } from 'utils/data-type'
 
+interface FetchRequest extends RequestInit {
+  url: string
+  data?: any
+}
+
 // export const fetcher = async (args: AxiosRequestConfig<any>) => {
-export const fetcher = async (args: any) => {
-  const { url, method, data } = args || {}
+export const fetcher = async (args: FetchRequest) => {
+  const { url, data } = args || {}
   if (!url) {
     return {}
   }
 
+  if (!args.method) {
+    args.method = 'GET'
+  }
+
+  console.log(`${url} 参数 =>`, data)
+
   let body = data
-  if (method === 'POST') {
+  if (['POST', 'PUT'].includes(args.method)) {
     args.headers = {
       'Content-Type': 'application/json'
     }
@@ -35,7 +46,7 @@ export const fetcher = async (args: any) => {
 
   // 使用 fetch 进行请求
   const response = await fetch(args.url, {
-    method: method || 'GET',
+    method: args.method,
     headers: {
       // Accept: 'application/vnd.dpexpo.v1+json' //设置请求头
     },
@@ -44,6 +55,8 @@ export const fetcher = async (args: any) => {
   }).then((res) => {
     return res.json()
   })
+
+  console.log(`${url} 结果 =>`, response)
 
   // return response.data
   return response
