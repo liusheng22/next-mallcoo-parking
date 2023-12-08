@@ -8,6 +8,8 @@ export interface PaymentParams extends AccountItem, CarConfig {
 
 export interface MallcooData {
   Token?: string
+  PlateNo?: string
+  PayTimes?: number
   OrderID?: string
   ProjectType?: string
   PayOrderId?: string
@@ -16,6 +18,7 @@ export interface MallcooData {
   WeChatMiniProgramOpenID?: string
   ParkName?: string
   EntryTime?: string
+  Remark?: string
   RightsRuleModelList?: any[]
   RightsList?: any[]
   RightsID?: string

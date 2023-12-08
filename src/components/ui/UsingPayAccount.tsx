@@ -33,11 +33,11 @@ const UsingPayAccount: FC<UsingPayAccountProps> = (props) => {
   useEffect(() => {
     const step = usingList.length > 1 ? 1 / (usingList.length - 1) : 1
     const list = usingList.map((item: AccountItem, index: number) => {
-      const { name, usedTime } = item
-      const time = usedTime ? `${dayjs(usedTime).format('hh:mm')}` : ''
-      const label = time ? `${time}(${name})` : name
+      const { name, time } = item
+      const paymentTime = time ? `${dayjs(time).format('HH:mm')}` : ''
+      const label = paymentTime ? `${name}(${paymentTime})` : name
       const currStep = index * step
-      if (usedTime) {
+      if (time) {
         setDefaultValue(currStep)
       }
 
