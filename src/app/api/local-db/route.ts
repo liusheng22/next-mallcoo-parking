@@ -13,13 +13,6 @@ export async function GET(req: NextRequest) {
   // const file = path.join(process.cwd(), '', 'local-db.json')
   // const stringified = readFileSync(file, 'utf8')
 
-  const file = path.join('/tmp/local-db.json')
-  await cosUpload({
-    filepath: file,
-    newFilename: 'local-db',
-    suffix: 'json'
-  })
-
   // fetch 读取网络文件 https://cdn-1257429552.cos.ap-guangzhou.myqcloud.com/json/local-db.json
   const response = await fetch(
     'https://cdn-1257429552.cos.ap-guangzhou.myqcloud.com/json/local-db.json'
@@ -27,8 +20,10 @@ export async function GET(req: NextRequest) {
   const stringified = await response.text()
   const fileJsonObj = JSON.parse(stringified) || {}
   console.log('fileJsonObj =>', fileJsonObj)
+  const { mallWithAccount = {} } = fileJsonObj || {}
+  const result = mallWithAccount['11707']
 
-  return success(fileJsonObj)
+  return success(result)
 
   // return success(data)
 }
