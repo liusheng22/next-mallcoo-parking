@@ -3,11 +3,12 @@ import { success } from '@/helper/response'
 import { NextRequest } from 'next/server'
 import path from 'path'
 import { getQuery } from 'utils/api-route'
-import { db } from 'utils/db'
 
 export async function GET(req: NextRequest) {
-  const { mainKey, minorKey } = getQuery(req)
-  const data = (await db.getObjectDefault(`.${mainKey}.${minorKey}`)) || {}
+  const request = getQuery(req)
+  console.log('request =>', request)
+  // const { mainKey, minorKey } = getQuery(req)
+  // const data = (await db.getObjectDefault(`.${mainKey}.${minorKey}`)) || {}
 
   // const file = path.join(process.cwd(), '', 'local-db.json')
   // const stringified = readFileSync(file, 'utf8')
@@ -28,12 +29,13 @@ export async function GET(req: NextRequest) {
   console.log('fileJsonObj =>', fileJsonObj)
 
   return success(fileJsonObj)
+
   // return success(data)
 }
 
 export async function POST(req: NextRequest) {
   const query = await req.json()
-  const data = (await db.getObjectDefault(`.mallWithAccount.11707`)) || {}
+  // const data = (await db.getObjectDefault(`.mallWithAccount.11707`)) || {}
   const file = path.join('/tmp/local-db.json')
   await cosUpload({
     filepath: file,

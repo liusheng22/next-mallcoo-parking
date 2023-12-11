@@ -34,6 +34,7 @@ export const cosUpload = async (info: any) => {
         }
       },
       (err: any, data: any) => {
+        console.log('data =>', data)
         if (err) {
           reject(err)
         } else {
