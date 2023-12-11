@@ -7,6 +7,12 @@
 get {{baseUrl}}/api/local-db?mainKey=mallWithAccount&minorKey=11707
 
 ###
+post {{baseUrl}}/api/local-db
+Content-Type: {{contentType}}
+
+{}
+
+###
 post {{baseUrl}}/api/demo/db?mallId=11707
 Content-Type: {{contentType}}
 

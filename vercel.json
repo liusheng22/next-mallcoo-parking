@@ -1,0 +1,12 @@
+{
+  "functions": {
+    "app/api/local-db/route.ts": {
+      "memory": 2048,
+      "maxDuration": 60
+    },
+    "src/app/api/local-db/route.ts": {
+      "memory": 2048,
+      "maxDuration": 60
+    }
+  }
+}
