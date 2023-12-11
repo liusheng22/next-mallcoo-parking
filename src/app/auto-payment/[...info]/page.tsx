@@ -42,7 +42,7 @@ const page: FC<pageProps> = async ({ params }) => {
   // const mallConfig = ((await db.getObjectDefault(
   //   `.mallWithAccount.${mallId}`
   // )) || {}) as MallConfig
-  const mallConfig = await fetcher({
+  let mallConfig = await fetcher({
     url: `/api/local-db?mainKey=mallWithAccount&minorKey=${mallId}`,
     method: 'GET'
   })
@@ -55,8 +55,7 @@ const page: FC<pageProps> = async ({ params }) => {
   const fileJsonObj = JSON.parse(stringified) || {}
   console.log('fileJsonObj =>', fileJsonObj)
   const { mallWithAccount = {} } = fileJsonObj || {}
-  const result = mallWithAccount['11707']
-  console.log('----result--->', result)
+  mallConfig = mallWithAccount['11707']
 
   const { parkId, projectType } = mallConfig || {}
   const { uid } = defaultAccountListByMall(mallId)
