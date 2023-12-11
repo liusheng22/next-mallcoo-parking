@@ -63,6 +63,12 @@ const page: FC<pageProps> = async ({ params }) => {
 
   return (
     <div>
+      <div>
+        <div>uid: {uid}</div>
+        <div>plateNo: {plateNo}</div>
+        <div>mallId: {mallId}</div>
+        <div>parkId: {parkId}</div>
+      </div>
       {
         // 是否有待缴费的车辆
         isWaitPay ? (
@@ -81,16 +87,6 @@ const page: FC<pageProps> = async ({ params }) => {
           <NotPlateNoInfo plateNo={plateNo} />
         )
       }
-
-      {/* <UserCarPayAccount
-      userCar={userCar}
-    /> */}
-
-      {/* <PaymentProgress
-      plateNo={plateNo}
-      usingList={autoPaymentAccountList}
-    /> */}
-      {/* setUserCar={setUserCarPayAccount} */}
     </div>
   )
 }
