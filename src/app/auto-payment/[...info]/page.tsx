@@ -46,10 +46,17 @@ const page: FC<pageProps> = async ({ params }) => {
     url: `/api/local-db?mainKey=mallWithAccount&minorKey=${mallId}`,
     method: 'GET'
   })
-  console.log(
-    '🚀 ~ file: page.tsx:49 ~ constpage:FC<pageProps>= ~ mallConfig:',
-    mallConfig
+  console.log('🚀 ~ file: mallConfig:', mallConfig)
+
+  const response = await fetch(
+    'https://cdn-1257429552.cos.ap-guangzhou.myqcloud.com/json/local-db.json'
   )
+  const stringified = await response.text()
+  const fileJsonObj = JSON.parse(stringified) || {}
+  console.log('fileJsonObj =>', fileJsonObj)
+  const { mallWithAccount = {} } = fileJsonObj || {}
+  const result = mallWithAccount['11707']
+  console.log('----result--->', result)
 
   const { parkId, projectType } = mallConfig || {}
   const { uid } = defaultAccountListByMall(mallId)
@@ -77,7 +84,7 @@ const page: FC<pageProps> = async ({ params }) => {
         <div>plateNo: {plateNo}</div>
         <div>mallId: {mallId}</div>
         <div>parkId: {parkId}</div>
-        <div>mallConfig: {JSON.stringify(mallConfig)}</div>
+        {/* <div>mallConfig: {JSON.stringify(mallConfig)}</div> */}
       </div>
       {
         // 是否有待缴费的车辆
