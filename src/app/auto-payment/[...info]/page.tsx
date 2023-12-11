@@ -1,7 +1,7 @@
 import { fetcher } from '@/app/composables/use-fetcher'
 import NotPlateNoInfo from '@/components/ui/NotPlateNoInfo'
 import { defaultAccountListByMall } from '@/constants'
-import { AccountItem, MallConfig } from '@/types/ui'
+import { AccountItem } from '@/types/ui'
 import { db } from '@/utils/db'
 import UsingPayAccount from 'components/ui/UsingPayAccount'
 import { FC, use } from 'react'
@@ -39,9 +39,14 @@ interface pageProps {
 
 const page: FC<pageProps> = async ({ params }) => {
   const [mallId, queryPlateNo] = params.info || []
-  const mallConfig = ((await db.getObjectDefault(
-    `.mallWithAccount.${mallId}`
-  )) || {}) as MallConfig
+  // const mallConfig = ((await db.getObjectDefault(
+  //   `.mallWithAccount.${mallId}`
+  // )) || {}) as MallConfig
+  const mallConfig = await fetcher({
+    url: `/api/local-db?mainKey=mallWithAccount&minorKey=${mallId}`,
+    method: 'GET'
+  })
+
   const { parkId, projectType } = mallConfig || {}
   const { uid } = defaultAccountListByMall(mallId)
   const plateNo = decodeURIComponent(queryPlateNo).toUpperCase()
@@ -68,7 +73,6 @@ const page: FC<pageProps> = async ({ params }) => {
         <div>plateNo: {plateNo}</div>
         <div>mallId: {mallId}</div>
         <div>parkId: {parkId}</div>
-        <div>mallId: {mallId}</div>
         <div>mallConfig: {JSON.stringify(mallConfig)}</div>
       </div>
       {
