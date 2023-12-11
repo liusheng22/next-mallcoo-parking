@@ -1,2 +1,72 @@
 ###
-get {{baseUrl}}/api/demo/db?plateNo=川F5N0S2
+# get {{baseUrl}}/api/demo/db?plateNo=川F5N0S2
+get {{baseUrl}}/api/demo/db?mallId=11707
+
+###
+post {{baseUrl}}/api/demo/db?mallId=11707
+Content-Type: {{contentType}}
+
+{"json":{
+  "mallId": "11707",
+  "parkId": "985",
+  "projectType": "16706",
+  "list": [
+      {
+          "id": 1,
+          "name": "hens",
+          "uid": "185977177",
+          "openId": "oXaNv5SrhpX66OKSaIlljY0iDsEY",
+          "isPaid": false,
+          "isSelected": true
+      },
+      {
+          "id": 2,
+          "name": "mi6",
+          "uid": "185946750",
+          "openId": "oXaNv5UQomxiFVwo0jU0PKh8ct-8",
+          "isPaid": false,
+          "isSelected": false
+      },
+      {
+          "id": 3,
+          "name": "i7",
+          "uid": "186000831",
+          "openId": "oXaNv5R9j18VxYpavtv5ND-qQqt4",
+          "isPaid": false,
+          "isSelected": false
+      },
+      {
+          "id": 4,
+          "name": "meih",
+          "uid": "173511089",
+          "openId": "oXaNv5VxlIMA2utH7YmpTbyTK6Jg",
+          "isPaid": false,
+          "isSelected": true
+      },
+      {
+          "id": 5,
+          "name": "lai",
+          "uid": "185961666",
+          "openId": "oXaNv5ekbtVTjmRxSAlgzGxuEPJM",
+          "isPaid": false,
+          "isSelected": false
+      },
+      {
+          "id": 6,
+          "name": "pdt",
+          "uid": "192970179",
+          "openId": "oXaNv5WH2CJvvydnoV47dwRLbsaY",
+          "isPaid": false,
+          "isSelected": false
+      },
+      {
+          "id": 7,
+          "name": "liu",
+          "uid": "167476415",
+          "openId": "oXaNv5UvehBNlvz6nj9gylgnSC5g",
+          "isPaid": false,
+          "isSelected": false,
+          "isDefault": false
+      }
+  ]
+}}

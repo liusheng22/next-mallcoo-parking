@@ -1,7 +1,7 @@
 import { Config, JsonDB } from 'node-json-db'
 
 // export const db = new JsonDB(new Config('local-db', true, true, '.'))
-export const db = new JsonDB(new Config('/tmp/local-db', true, true, '.'))
+export const db = new JsonDB(new Config('/tmp/local-db.json', true, true, '.'))
 
 // try catch 封装
 const tryCatch = async (fn: any) => {
