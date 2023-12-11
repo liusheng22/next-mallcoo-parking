@@ -6,7 +6,7 @@ import { AccountItem } from '@/types/ui'
 import { fetcher } from 'app/composables/use-fetcher'
 import { NextRequest } from 'next/server'
 import { getQueryKey } from 'utils/api-route'
-import { db } from 'utils/db'
+import { cosDb } from 'utils/db'
 
 // 查询可以领取的优惠券
 export async function GET(req: NextRequest) {
@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const { openId: queryOpenId, plateNo, list = [] } = (await req.json()) || {}
   const accountList: AccountItem[] =
-    (await db.getObjectDefault(`.usingAccount.${plateNo}.list`)) || []
+    (await cosDb.getObjectDefault(`.usingAccount.${plateNo}.list`)) || []
   if (queryOpenId) {
     // 某些优惠券需要领取两次
     for (const item of list) {

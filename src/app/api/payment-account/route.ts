@@ -7,18 +7,18 @@ import { failed, success } from '@/helper/response'
 import { rightsFilter } from '@/helper/rights-filter'
 import ScheduleHelper from '@/helper/schedule'
 import { AccountItem, CarConfig, PayInfo } from '@/types/ui'
-import { db, localDb } from '@/utils/db'
 import { fetcher } from 'app/composables/use-fetcher'
 import dayjs from 'dayjs'
 import { NextRequest } from 'next/server'
 import { getQueryKey } from 'utils/api-route'
+import { cosDb } from 'utils/db'
 
 // 自动支付任务
 const paymentSchedule = async (query: PayInfo) => {
   const { mallId, plateNo, entryTime } = query
   const schedule = new ScheduleHelper()
 
-  const carConfig: CarConfig = await db.getObjectDefault(
+  const carConfig: CarConfig = await cosDb.getObjectDefault(
     `.usingAccount.${plateNo}`
   )
   const { freeMin } = carConfig || {}
@@ -27,7 +27,7 @@ const paymentSchedule = async (query: PayInfo) => {
   // 定时执行的任务
   const paymentTask = async () => {
     const usingList: AccountItem[] =
-      (await db.getObjectDefault(`.usingAccount.${plateNo}.list`, [])) || []
+      (await cosDb.getObjectDefault(`.usingAccount.${plateNo}.list`, [])) || []
     // // 找到第一个未支付的账号
     const account = usingList.find((item) => !item.isPaid)
     // // 找到 index
@@ -63,23 +63,23 @@ const paymentSchedule = async (query: PayInfo) => {
       const nextAccount = usingList[nextIndex]
       // 更新账号状态
       const currentTime = dayjs().format('YYYY:MM:DD HH:mm:ss')
-      await localDb.push(
+      await cosDb.push(
         `.usingAccount.${plateNo}.list[${index}].isPaid`,
         true,
         true
       )
-      await localDb.push(
+      await cosDb.push(
         `.usingAccount.${plateNo}.list[${index}].time`,
         currentTime,
         true
       )
       // 更新商场下的账号状态
       const currentMallAccountList: AccountItem[] =
-        (await db.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
+        (await cosDb.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
       const paidIndex = currentMallAccountList.findIndex(
         (item) => item.openId === account.openId
       )
-      await localDb.push(
+      await cosDb.push(
         `.mallWithAccount.${mallId}.list[${paidIndex}].isPaid`,
         true,
         true
@@ -89,30 +89,30 @@ const paymentSchedule = async (query: PayInfo) => {
       } else {
         schedule.cancelTask(plateNo as string)
         // 清空支付账号信息
-        await localDb.delete(`.usingAccount.${plateNo}`)
+        await cosDb.delete(`.usingAccount.${plateNo}`)
       }
       return false
     }
 
     // 更新账号状态
     const currentTime = dayjs().format('YYYY:MM:DD HH:mm:ss')
-    await localDb.push(
+    await cosDb.push(
       `.usingAccount.${plateNo}.list[${index}].isPaid`,
       true,
       true
     )
-    await localDb.push(
+    await cosDb.push(
       `.usingAccount.${plateNo}.list[${index}].time`,
       currentTime,
       true
     )
 
     const currentMallAccountList: AccountItem[] =
-      (await db.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
+      (await cosDb.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
     const paidIndex = currentMallAccountList.findIndex(
       (item) => item.openId === account.openId
     )
-    await localDb.push(
+    await cosDb.push(
       `.mallWithAccount.${mallId}.list[${paidIndex}].isPaid`,
       true,
       true
@@ -177,7 +177,7 @@ export async function GET(req: NextRequest) {
     return failed()
   }
 
-  const list = (await db.getObjectDefault(
+  const list = (await cosDb.getObjectDefault(
     `.usingAccount.${plateNo}.list`,
     []
   )) as AccountItem[]
@@ -228,7 +228,7 @@ export async function POST(req: NextRequest) {
     // 自动缴费的账号列表
     list: selectAccountList
   }
-  await db.push(
+  await cosDb.push(
     '.usingAccount',
     {
       [plateNo]: carConfig
@@ -282,7 +282,7 @@ export async function DELETE(req: NextRequest) {
   schedule.cancelTask(plateNo)
 
   const carConfig: CarConfig =
-    (await db.getObjectDefault(`.usingAccount.${plateNo}`)) || {}
+    (await cosDb.getObjectDefault(`.usingAccount.${plateNo}`)) || {}
   const { mallId, list: accountList } = carConfig
   // 未支付的账号
   const unpaidList = accountList.filter((item) => !item.isPaid)
@@ -290,23 +290,23 @@ export async function DELETE(req: NextRequest) {
   for (const item of unpaidList) {
     const { openId } = item
     const currentMallAccountList: AccountItem[] =
-      (await db.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
+      (await cosDb.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
     const paidIndex = currentMallAccountList.findIndex(
       (item) => item.openId === openId
     )
-    await localDb.push(
+    await cosDb.push(
       `.mallWithAccount.${mallId}.list[${paidIndex}].isPaid`,
       false,
       true
     )
-    await localDb.push(
+    await cosDb.push(
       `.mallWithAccount.${mallId}.list[${paidIndex}].isSelected`,
       false,
       true
     )
   }
 
-  await localDb.delete(`.usingAccount.${plateNo}`)
+  await cosDb.delete(`.usingAccount.${plateNo}`)
 
   return success()
 }

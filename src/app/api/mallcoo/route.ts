@@ -4,7 +4,7 @@ import { AccountItem } from '@/types/ui'
 import dayjs from 'dayjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { getQuery } from 'utils/api-route'
-import { db, localDb } from 'utils/db'
+import { cosDb } from 'utils/db'
 
 export async function GET(req: NextRequest) {
   const { uid, plateNo, mallId, parkId } = getQuery(req)
@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     isWaitPay = true
   } else {
     // 无待缴费的车辆信息，清空 db 中的车辆信息
-    const paymentAccountList = (await db.getObjectDefault(
+    const paymentAccountList = (await cosDb.getObjectDefault(
       `.usingAccount.${plateNo}.list`,
       []
     )) as AccountItem[]
@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
       .map((item: AccountItem) => item.openId)
     // 反哺到原始数据
     const accountList: AccountItem[] =
-      (await db.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
+      (await cosDb.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
     const list = accountList.map((item: AccountItem) => {
       if (unUsedOpenIdList.includes(item.openId)) {
         return {
@@ -45,9 +45,9 @@ export async function GET(req: NextRequest) {
       return item
     })
     // 重新设置 .accountList
-    await db.push(`.mallWithAccount.${mallId}.list`, list, true)
+    await cosDb.push(`.mallWithAccount.${mallId}.list`, list, true)
 
-    await localDb.delete(`.usingAccount.${plateNo}`)
+    await cosDb.delete(`.usingAccount.${plateNo}`)
   }
 
   // data = {

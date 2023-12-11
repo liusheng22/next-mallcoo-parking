@@ -19,7 +19,7 @@ const bucket = {
 
 export const cosUpload = async (info: any) => {
   return new Promise((resolve, reject) => {
-    const { filepath, newFilename, suffix } = info
+    const { body, filepath, newFilename, suffix } = info
     const objectKey = `${bucket.Key + bucket.path + newFilename}.${suffix}`
     cos.putObject(
       {
@@ -27,7 +27,7 @@ export const cosUpload = async (info: any) => {
         Region: bucket.Region,
         Key: objectKey,
         StorageClass: 'STANDARD',
-        Body: fs.createReadStream(filepath),
+        Body: body ? body : fs.createReadStream(filepath),
         onProgress: (progressData: any) => {
           const { percent } = progressData
           console.log(`上传进度 --- ${percent}%`)

@@ -1,7 +1,7 @@
 import { MallcooData, PaymentParams } from '@/types/mallcoo'
 import { AccountItem } from '@/types/ui'
 import { fetcher } from 'app/composables/use-fetcher'
-import { db, localDb } from 'utils/db'
+import { cosDb } from 'utils/db'
 import { sendFailNotify, sendSuccessNotify } from '../notify'
 import { rightsFilter } from '../rights-filter'
 import { fetchDiscountCoreQuery } from './discount'
@@ -122,7 +122,7 @@ const payment: (params: PaymentParams) => Promise<any> = async (params) => {
       // 清空支付账号信息
       if (accountTotal - index - 1 === 0) {
         console.log('所有账号支付完成，清空缓存')
-        localDb.delete(`.usingAccount.${plateNo}`)
+        cosDb.delete(`.usingAccount.${plateNo}`)
       }
     } else {
       sendSuccessNotify({
@@ -132,11 +132,11 @@ const payment: (params: PaymentParams) => Promise<any> = async (params) => {
 
       // 更新该支付账号的信息
       const currentMallAccountList: AccountItem[] =
-        (await db.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
+        (await cosDb.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
       const paidIndex = currentMallAccountList.findIndex(
         (item) => item.openId === openId
       )
-      await localDb.push(
+      await cosDb.push(
         `.mallWithAccount.${mallId}.list[${paidIndex}].isPaid`,
         true,
         true

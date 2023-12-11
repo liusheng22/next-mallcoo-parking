@@ -2,7 +2,7 @@ import { fetcher } from '@/app/composables/use-fetcher'
 import NotPlateNoInfo from '@/components/ui/NotPlateNoInfo'
 import { defaultAccountListByMall } from '@/constants'
 import { AccountItem, MallConfig } from '@/types/ui'
-import { db } from '@/utils/db'
+import { cosDb } from '@/utils/db'
 import ChooseSingleAccount from 'components/ui/ChooseSingleAccount'
 import ExistAutoPayment from 'components/ui/ExistAutoPayment'
 import { FC } from 'react'
@@ -15,7 +15,7 @@ interface pageProps {
 
 const page: FC<pageProps> = async ({ params }) => {
   const [mallId, queryPlateNo] = params.info || []
-  const mallConfig = (await db.getObjectDefault(
+  const mallConfig = (await cosDb.getObjectDefault(
     `.mallWithAccount.${mallId}`
   )) as MallConfig
   const { parkId, projectType } = mallConfig || {}
@@ -24,7 +24,7 @@ const page: FC<pageProps> = async ({ params }) => {
 
   // 是否有为车辆设置了的自动缴费账户
   let hasPaymentAccount = false
-  const autoPaymentAccountList = (await db.getObjectDefault(
+  const autoPaymentAccountList = (await cosDb.getObjectDefault(
     `.usingAccount.${plateNo}.list`,
     []
   )) as AccountItem[]

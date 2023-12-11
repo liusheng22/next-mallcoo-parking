@@ -1,7 +1,7 @@
 import { success } from '@/helper/response'
 import { NextRequest } from 'next/server'
 import { getQuery } from 'utils/api-route'
-import { db, localDb } from 'utils/db'
+import { cosDb } from 'utils/db'
 
 export async function GET(req: NextRequest) {
   // const { plateNo } = getQuery(req)
@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   // )
 
   const { mallId } = getQuery(req)
-  const mallWithAccount = await db.getObjectDefault(
+  const mallWithAccount = await cosDb.getObjectDefault(
     `.mallWithAccount.${mallId}`
   )
 
@@ -30,6 +30,6 @@ export async function POST(req: NextRequest) {
   const { mallId } = await getQuery(req)
   const { json } = await req.json()
   console.log('🚀 ~ file: route.ts:31 ~ POST ~ mallId, json:', mallId, json)
-  await localDb.push(`.mallWithAccount.${mallId}`, json, true)
+  await cosDb.push(`.mallWithAccount.${mallId}`, json, true)
   return success()
 }

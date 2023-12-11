@@ -3,7 +3,7 @@ import { failed, success } from '@/helper/response'
 import { AccountItem, CarConfig } from '@/types/ui'
 import { NextRequest } from 'next/server'
 import { getQueryKey } from 'utils/api-route'
-import { db } from 'utils/db'
+import { cosDb } from 'utils/db'
 
 export async function GET(req: NextRequest) {
   const plateNo = getQueryKey(req, 'plateNo')
@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
   }
   const testPayment = async (plateNo: string) => {
     // 获取当前车牌号下的账号列表
-    const carConfig = (await db.getObjectDefault(
+    const carConfig = (await cosDb.getObjectDefault(
       `.usingAccount.${plateNo}`
     )) as CarConfig
     const { list: usingList } = carConfig || {}
