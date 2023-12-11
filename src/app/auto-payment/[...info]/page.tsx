@@ -39,9 +39,9 @@ interface pageProps {
 
 const page: FC<pageProps> = async ({ params }) => {
   const [mallId, queryPlateNo] = params.info || []
-  const mallConfig = (await db.getObjectDefault(
+  const mallConfig = ((await db.getObjectDefault(
     `.mallWithAccount.${mallId}`
-  )) as MallConfig
+  )) || {}) as MallConfig
   const { parkId, projectType } = mallConfig || {}
   const { uid } = defaultAccountListByMall(mallId)
   const plateNo = decodeURIComponent(queryPlateNo).toUpperCase()
@@ -68,6 +68,8 @@ const page: FC<pageProps> = async ({ params }) => {
         <div>plateNo: {plateNo}</div>
         <div>mallId: {mallId}</div>
         <div>parkId: {parkId}</div>
+        <div>mallId: {mallId}</div>
+        <div>mallConfig: {JSON.stringify(mallConfig)}</div>
       </div>
       {
         // 是否有待缴费的车辆
