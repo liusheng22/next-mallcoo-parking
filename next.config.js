@@ -12,7 +12,7 @@ const nextConfig = {
   //   includePaths: [path.join(__dirname, 'styles')]
   // },
   env: {
-    API_URL: process.env.NEXT_APP_API_URL
+    // API_URL: process.env.NEXT_APP_API_URL
   },
   async rewrites() {
     return [

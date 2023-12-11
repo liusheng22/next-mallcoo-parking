@@ -46,6 +46,10 @@ const page: FC<pageProps> = async ({ params }) => {
     url: `/api/local-db?mainKey=mallWithAccount&minorKey=${mallId}`,
     method: 'GET'
   })
+  console.log(
+    '🚀 ~ file: page.tsx:49 ~ constpage:FC<pageProps>= ~ mallConfig:',
+    mallConfig
+  )
 
   const { parkId, projectType } = mallConfig || {}
   const { uid } = defaultAccountListByMall(mallId)

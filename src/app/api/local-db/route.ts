@@ -5,8 +5,9 @@ import { db } from 'utils/db'
 
 export async function GET(req: NextRequest) {
   const { mainKey, minorKey } = getQuery(req)
-  const data = await db.getObjectDefault(`.${mainKey}.${minorKey}`)
+  const data = (await db.getObjectDefault(`.${mainKey}.${minorKey}`)) || {}
 
+  console.log('🚀 ~ file: route.ts:10 ~ GET ~ data:', data)
   return success(data)
 }
 
