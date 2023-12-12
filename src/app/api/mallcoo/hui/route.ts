@@ -31,6 +31,14 @@ export async function GET(req: NextRequest) {
   })
   console.log('可领取优惠列表 =>', PromotionModelList)
   // POST(PromotionModelList)
+  const list = PromotionModelList.map((item: any) => {
+    const { MallID, ID, Name } = item
+    return {
+      MallID,
+      ID,
+      Name
+    }
+  })
   await fetcher({
     url: '/api/mallcoo/hui',
     method: 'POST',
@@ -39,7 +47,9 @@ export async function GET(req: NextRequest) {
       plateNo,
       token,
       projectType,
-      list: PromotionModelList
+      list
+      // list: PromotionModelList
+      // TODO: 对 list 进行过滤
     }
   })
   return success()
