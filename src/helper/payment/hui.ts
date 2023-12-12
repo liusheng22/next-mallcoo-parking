@@ -1,7 +1,5 @@
-import { MallcooData } from '@/types/mallcoo'
 import { PayInfo } from '@/types/ui'
 import mallcooFetcher from '@/utils/wrapper-mallcoo'
-import { fetchLoginForThirdV2 } from './login'
 
 // 获取优惠券列表
 export const fetchGetProIndexList: any = async (query: PayInfo) => {
@@ -34,11 +32,11 @@ export const fetchGetProIndexList: any = async (query: PayInfo) => {
 
 // 领取优惠券
 export const fetchReceiveCoupon: any = async (query: any) => {
-  const { MallID, ID, Name, openId } = query || {}
-  const { Token, ProjectType } = (await fetchLoginForThirdV2({
-    openId,
-    mallId: MallID
-  })) as MallcooData
+  const { MallID, ID, Name, projectType, token } = query || {}
+  // const { Token, ProjectType } = (await fetchLoginForThirdV2({
+  //   openId,
+  //   mallId: MallID
+  // })) as MallcooData
   const url = 'https://m.mallcoo.cn/api/hui/Promotion/ReceiveCoupon'
 
   const params = {
@@ -47,7 +45,8 @@ export const fetchReceiveCoupon: any = async (query: any) => {
     RefIDList: 1259062,
     PromotionName: Name, // 优惠券Name
     Header: {
-      Token: `${Token},${ProjectType}`
+      Token: `${token},${projectType}`
+      // Token: `${Token},${ProjectType}`
     }
   }
 

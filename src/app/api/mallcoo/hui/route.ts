@@ -36,6 +36,8 @@ export async function GET(req: NextRequest) {
     data: {
       openId: queryOpenId,
       plateNo,
+      token,
+      projectType,
       list: PromotionModelList
     }
   })
@@ -44,22 +46,48 @@ export async function GET(req: NextRequest) {
 
 // 领取优惠券
 export async function POST(req: NextRequest) {
-  const { openId: queryOpenId, plateNo, list = [] } = (await req.json()) || {}
+  const {
+    openId: queryOpenId,
+    plateNo,
+    token,
+    projectType,
+    list = []
+  } = (await req.json()) || {}
   const accountList: AccountItem[] =
     (await cosDb.getObjectDefault(`.usingAccount.${plateNo}.list`)) || []
   if (queryOpenId) {
     // 某些优惠券需要领取两次
     for (const item of list) {
-      await fetchReceiveCoupon({ ...item, openId: queryOpenId })
-      await fetchReceiveCoupon({ ...item, openId: queryOpenId })
+      await fetchReceiveCoupon({
+        ...item,
+        openId: queryOpenId,
+        projectType,
+        token
+      })
+      await fetchReceiveCoupon({
+        ...item,
+        openId: queryOpenId,
+        projectType,
+        token
+      })
     }
   } else {
     for (const account of accountList) {
       const { openId } = account
       for (const item of list) {
         // 某些优惠券需要领取两次
-        await fetchReceiveCoupon({ ...item, openId })
-        await fetchReceiveCoupon({ ...item, openId })
+        await fetchReceiveCoupon({
+          ...item,
+          openId,
+          projectType,
+          token
+        })
+        await fetchReceiveCoupon({
+          ...item,
+          openId,
+          projectType,
+          token
+        })
       }
     }
   }
