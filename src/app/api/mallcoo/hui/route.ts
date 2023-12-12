@@ -29,6 +29,7 @@ export async function GET(req: NextRequest) {
     token,
     projectType
   })
+  console.log('可领取优惠列表 =>', PromotionModelList)
   // POST(PromotionModelList)
   await fetcher({
     url: '/api/mallcoo/hui',
@@ -41,7 +42,7 @@ export async function GET(req: NextRequest) {
       list: PromotionModelList
     }
   })
-  return success(PromotionModelList)
+  return success()
 }
 
 // 领取优惠券

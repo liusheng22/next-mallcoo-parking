@@ -29,12 +29,14 @@ const ChooseSingleAccount: FC<Props> = (props) => {
       ) || []
 
     // 手动支付
-    await fetcher({
+    const result = await fetcher({
       url: `/api/payment-account`,
       method: 'PUT',
       data: { ...account, plateNo, mallId }
     })
 
+    console.log('支付结果 =>', result)
+    // todo: toast 成功
     router.refresh()
   }
 
