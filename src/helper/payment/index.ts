@@ -67,6 +67,7 @@ const payment: (params: PaymentParams) => Promise<any> = async (params) => {
     EntryTime // 入场时间
   }
 
+  console.log('所有优惠列表 =>', rightsRuleModelList)
   const rights = rightsFilter(rightsRuleModelList as any[], false)
   console.log('优惠信息 =>', rights)
   if (!rights || !rights.RightsID) {

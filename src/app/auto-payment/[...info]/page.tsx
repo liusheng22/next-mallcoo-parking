@@ -46,7 +46,6 @@ const page: FC<pageProps> = async ({ params }) => {
     url: `/api/local-db?mainKey=mallWithAccount&minorKey=${mallId}`,
     method: 'GET'
   })
-  console.log('🚀 ~ file: mallConfig:', mallConfig)
 
   const response = await fetch(
     'https://cdn-1257429552.cos.ap-guangzhou.myqcloud.com/json/local-db.json'

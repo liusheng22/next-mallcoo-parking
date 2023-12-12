@@ -29,7 +29,6 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const { mallId } = await getQuery(req)
   const { json } = await req.json()
-  console.log('🚀 ~ file: route.ts:31 ~ POST ~ mallId, json:', mallId, json)
   await cosDb.push(`.mallWithAccount.${mallId}`, json, true)
   return success()
 }

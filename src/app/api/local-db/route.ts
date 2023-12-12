@@ -50,8 +50,7 @@ export async function POST(req: NextRequest) {
   // const data = await db.getObjectDefault(`.mallWithAccount.11707`)
   // await cosDb.delete(`.usingAccount.11707`)
   const idx = (await cosDb.getIndex(`.mallWithAccount.11707.list`, 3)) || 0
-  console.log('🚀 ~ file: route.ts:52 ~ POST ~ data:', idx)
+  console.log('查询 index:', idx)
 
-  // console.log('🚀 ~ file: route.ts:53 ~ POST ~ data:', data)
   return success(query)
 }
