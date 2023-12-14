@@ -21,16 +21,17 @@ const SelectPlateNumber: FC<Props> = (props) => {
   const [selected, setSelected] = useState<string[]>([])
 
   const setCarPaymentInfo = async (selected: string[]) => {
-    const selectAccountList = accountList.map((item: AccountItem) => {
-      const { openId } = item
-      if (selected.includes(openId)) {
+    const selectAccountList = accountList
+      .filter((item: AccountItem) => {
+        const { openId } = item
+        return selected.includes(openId)
+      })
+      .map((item: AccountItem) => {
         return {
           ...item,
           isSelected: true
         }
-      }
-      return item
-    })
+      })
     const params = {
       plateNo,
       mallId,
@@ -59,9 +60,13 @@ const SelectPlateNumber: FC<Props> = (props) => {
     await updateAccountListStatus(selected)
 
     // 设置为车辆进行自动缴费的账户列表
+    // await setCarPaymentInfo(selected)
     await setCarPaymentInfo(selected)
 
+    // 缓存问题导致页面不会刷新
     router.refresh()
+    // TODO: 跳转到首页 进行 toast 提示
+    // router.push('/indexs')
   }
 
   const getAccountList = async () => {

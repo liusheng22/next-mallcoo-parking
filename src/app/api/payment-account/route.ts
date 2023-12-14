@@ -7,11 +7,74 @@ import { failed, success } from '@/helper/response'
 import { rightsFilter } from '@/helper/rights-filter'
 import ScheduleHelper from '@/helper/schedule'
 import { AccountItem, CarConfig, PayInfo } from '@/types/ui'
-import { fetcher } from 'app/composables/use-fetcher'
 import dayjs from 'dayjs'
 import { NextRequest } from 'next/server'
-import { getQueryKey } from 'utils/api-route'
+import { getQueryKey, postText2Json } from 'utils/api-route'
 import { cosDb } from 'utils/db'
+
+// 存储自动缴费的账号信息
+const setPaymentAccount = async (body: any) => {
+  const { mallId, parkId, projectType, plateNo, selectAccountList } = body
+
+  const { uid, openId } = defaultAccountListByMall(mallId)
+  const {
+    EntryTime: entryTime,
+    NeedPayAmount,
+    ParkingMinutes
+  } = await fetchGetParkFeeInit({
+    uid,
+    mallId,
+    plateNo,
+    parkId
+  })
+  const { Token } = await fetchLoginForThirdV2({ openId, mallId })
+  const { RightsRuleModelList } = await fetchDiscountCoreQuery({
+    plateNo,
+    parkId,
+    projectType,
+    mallId,
+    token: Token,
+    needPayAmount: NeedPayAmount,
+    parkingMinutes: ParkingMinutes
+  })
+
+  const { Minutes = 0, Amount = 0 } = rightsFilter(
+    RightsRuleModelList as any[],
+    true
+  )
+
+  const carConfig: CarConfig = {
+    plateNo,
+    mallId,
+    parkId,
+    token: Token,
+    projectType,
+    // 免费时长
+    freeMin: Minutes,
+    freeAmount: Amount,
+    // 自动缴费的账号列表
+    list: selectAccountList
+  }
+  await cosDb.push(
+    '.usingAccount',
+    {
+      [plateNo]: carConfig
+    },
+    false
+  )
+
+  paymentSchedule({
+    mallId,
+    plateNo,
+    entryTime
+  })
+
+  // TODO: 查询并领取优惠券
+  // const url = `/api/mallcoo/hui?mallId=${mallId}&plateNo=${plateNo}`
+  // fetcher({ url })
+
+  return carConfig
+}
 
 // 自动支付任务
 const paymentSchedule = async (query: PayInfo) => {
@@ -187,66 +250,14 @@ export async function GET(req: NextRequest) {
 
 // 设置自动缴费的账号信息
 export async function POST(req: NextRequest) {
-  const { mallId, parkId, projectType, plateNo, selectAccountList } =
-    (await req.json()) || {}
+  // const { mallId, parkId, projectType, plateNo, selectAccountList } =
+  //   (await req.json()) || {}
+  const body = await postText2Json(req)
+  console.log('post payment-account api body =>', body)
 
-  const { uid, openId } = defaultAccountListByMall(mallId)
-  const {
-    EntryTime: entryTime,
-    NeedPayAmount,
-    ParkingMinutes
-  } = await fetchGetParkFeeInit({
-    uid,
-    mallId,
-    plateNo,
-    parkId
-  })
-  const { Token } = await fetchLoginForThirdV2({ openId, mallId })
-  const { RightsRuleModelList } = await fetchDiscountCoreQuery({
-    plateNo,
-    parkId,
-    projectType,
-    mallId,
-    token: Token,
-    needPayAmount: NeedPayAmount,
-    parkingMinutes: ParkingMinutes
-  })
+  setPaymentAccount(body)
 
-  const { Minutes = 0, Amount = 0 } = rightsFilter(
-    RightsRuleModelList as any[],
-    true
-  )
-
-  const carConfig: CarConfig = {
-    plateNo,
-    mallId,
-    parkId,
-    projectType,
-    // 免费时长
-    freeMin: Minutes,
-    freeAmount: Amount,
-    // 自动缴费的账号列表
-    list: selectAccountList
-  }
-  await cosDb.push(
-    '.usingAccount',
-    {
-      [plateNo]: carConfig
-    },
-    false
-  )
-
-  const data = await paymentSchedule({
-    mallId,
-    plateNo,
-    entryTime
-  })
-
-  // 查询并领取优惠券
-  const url = `/api/mallcoo/hui?mallId=${mallId}&plateNo=${plateNo}`
-  fetcher({ url })
-
-  return success(data)
+  return success(body)
 }
 
 // 手动执行自动缴费的任务

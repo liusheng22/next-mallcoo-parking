@@ -1,7 +1,7 @@
 import { fetcher } from '@/app/composables/use-fetcher'
 import NotPlateNoInfo from '@/components/ui/NotPlateNoInfo'
 import { defaultAccountListByMall } from '@/constants'
-import { AccountItem } from '@/types/ui'
+import { AccountItem, MallConfig } from '@/types/ui'
 import { cosDb } from '@/utils/db'
 import UsingPayAccount from 'components/ui/UsingPayAccount'
 import { FC, use } from 'react'
@@ -39,22 +39,26 @@ interface pageProps {
 
 const page: FC<pageProps> = async ({ params }) => {
   const [mallId, queryPlateNo] = params.info || []
+  const mallConfig = ((await cosDb.getObjectDefault(
+    `.mallWithAccount.${mallId}`
+  )) || {}) as MallConfig
   // const mallConfig = ((await cosDb.getObjectDefault(
   //   `.mallWithAccount.${mallId}`
   // )) || {}) as MallConfig
-  let mallConfig = await fetcher({
-    url: `/api/local-db?mainKey=mallWithAccount&minorKey=${mallId}`,
-    method: 'GET'
-  })
 
-  const response = await fetch(
-    'https://cdn-1257429552.cos.ap-guangzhou.myqcloud.com/json/local-db.json'
-  )
-  const stringified = await response.text()
-  const fileJsonObj = JSON.parse(stringified) || {}
-  console.log('fileJsonObj =>', fileJsonObj)
-  const { mallWithAccount = {} } = fileJsonObj || {}
-  mallConfig = mallWithAccount['11707']
+  // let mallConfig = await fetcher({
+  //   url: `/api/local-db?mainKey=mallWithAccount&minorKey=${mallId}`,
+  //   method: 'GET'
+  // })
+
+  // const response = await fetch(
+  //   'https://cdn-1257429552.cos.ap-guangzhou.myqcloud.com/json/local-db.json'
+  // )
+  // const stringified = await response.text()
+  // const fileJsonObj = JSON.parse(stringified) || {}
+  // console.log('fileJsonObj =>', fileJsonObj)
+  // const { mallWithAccount = {} } = fileJsonObj || {}
+  // mallConfig = mallWithAccount['11707']
 
   const { parkId, projectType } = mallConfig || {}
   const { uid } = defaultAccountListByMall(mallId)
@@ -62,11 +66,11 @@ const page: FC<pageProps> = async ({ params }) => {
 
   // 是否有为车辆设置了的自动缴费账户
   let hasPaymentAccount = false
-  const autoPaymentAccountList = (await cosDb.getObjectDefault(
-    `.usingAccount.${plateNo}.list`,
-    []
-  )) as AccountItem[]
-  hasPaymentAccount = autoPaymentAccountList.length > 0
+  const autoPaymentAccountList: AccountItem[] =
+    (await cosDb.getObjectDefault(`.usingAccount.${plateNo}.list`)) || []
+  console.log('autoPaymentAccountList =>', autoPaymentAccountList)
+  hasPaymentAccount =
+    autoPaymentAccountList && autoPaymentAccountList.length > 0
 
   const queryStr = `uid=${uid}&plateNo=${plateNo}&mallId=${mallId}&parkId=${parkId}`
   const parkInfo = await fetcher({

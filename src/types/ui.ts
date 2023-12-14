@@ -17,6 +17,7 @@ export interface CarConfig {
   plateNo: string
   mallId: string
   parkId: string
+  token?: string
   projectType?: string
   freeMin?: number
   freeAmount?: number
