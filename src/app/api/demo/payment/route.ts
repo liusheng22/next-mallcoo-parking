@@ -2,11 +2,11 @@ import payment from '@/helper/payment'
 import { failed, success } from '@/helper/response'
 import { AccountItem, CarConfig } from '@/types/ui'
 import { NextRequest } from 'next/server'
-import { getQueryKey } from 'utils/api-route'
+import { getQueryValue } from 'utils/api-route'
 import { cosDb } from 'utils/db'
 
 export async function GET(req: NextRequest) {
-  const plateNo = getQueryKey(req, 'plateNo')
+  const plateNo = getQueryValue(req, 'plateNo')
   if (!plateNo) {
     return failed()
   }

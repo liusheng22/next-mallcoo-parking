@@ -6,7 +6,7 @@ export const getQuery: any = (req: NextRequest) => {
   return query
 }
 
-export const getQueryKey: any = (req: NextRequest, key: string) => {
+export const getQueryValue: any = (req: NextRequest, key: string) => {
   if (!key) {
     return null
   }

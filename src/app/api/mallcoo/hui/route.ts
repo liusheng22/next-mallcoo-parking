@@ -21,16 +21,16 @@ const postMallcooHuiApi = async (data: any) => {
 export async function GET(req: NextRequest) {
   // const searchParams = new URLSearchParams(req.nextUrl.searchParams)
   // const plateNo = searchParams.get('plateNo')
-  // const mallId = getQueryKey(req, 'mallId')
-  // const token = getQueryKey(req, 'token')
+  // const mallId = getQueryValue(req, 'mallId')
+  // const token = getQueryValue(req, 'token')
 
   // const url = `/api/mallcoo/hui?mallId=${req.query.mallId}&token=${req.query.token}`
   // fetcher({ url })
 
-  // const mallId = getQueryKey(req, 'mallId') as string
-  // const plateNo = getQueryKey(req, 'plateNo') as string
-  // // const queryOpenId = getQueryKey(req, 'openId') as string
-  // const openId = getQueryKey(req, 'openId') as string
+  // const mallId = getQueryValue(req, 'mallId') as string
+  // const plateNo = getQueryValue(req, 'plateNo') as string
+  // // const queryOpenId = getQueryValue(req, 'openId') as string
+  // const openId = getQueryValue(req, 'openId') as string
 
   const { mallId, plateNo, openId } = getQuery(req)
   const { projectType } = mallInfo(mallId)

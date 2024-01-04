@@ -2,10 +2,10 @@ import { fetcher } from '@/app/composables/use-fetcher'
 import NotPlateNoInfo from '@/components/ui/NotPlateNoInfo'
 import { defaultAccountListByMall } from '@/constants'
 import { AccountItem, MallConfig } from '@/types/ui'
-import { cosDb } from '@/utils/db'
 import ChooseSingleAccount from 'components/ui/ChooseSingleAccount'
 import ExistAutoPayment from 'components/ui/ExistAutoPayment'
 import { FC } from 'react'
+import { cosDb } from 'utils/db'
 
 interface pageProps {
   params: {

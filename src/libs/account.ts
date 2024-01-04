@@ -24,14 +24,15 @@ export const initAccount = async (mallInfo: any, isForce?: boolean) => {
   if (isForce) {
     // 定时更新
     if (dbAccountList && dbAccountList.length) {
-      cosDb.push(`.mallWithAccount.${mallId}.list`, accountList, true)
+      await cosDb.push(`.mallWithAccount.${mallId}.list`, accountList, true)
     }
   } else {
     // 手动更新
     if (!dbAccountList || !dbAccountList.length) {
-      cosDb.push(`.mallWithAccount.${mallId}`, mallConfig, false)
+      await cosDb.push(`.mallWithAccount.${mallId}`, mallConfig, false)
     }
   }
+  console.log('mallConfig =>', mallConfig)
   return
 }
 

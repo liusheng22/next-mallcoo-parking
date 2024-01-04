@@ -2,10 +2,10 @@ import { fetcher } from '@/app/composables/use-fetcher'
 import NotPlateNoInfo from '@/components/ui/NotPlateNoInfo'
 import { defaultAccountListByMall } from '@/constants'
 import { AccountItem, MallConfig } from '@/types/ui'
-import { cosDb } from '@/utils/db'
 import UsingPayAccount from 'components/ui/UsingPayAccount'
 import { FC, use } from 'react'
 import SelectPlateNumber from 'ui/SelectPlateNumber'
+import { cosDb } from 'utils/db'
 
 const getPlateNoInfo = async (plateNo: string) => {
   const data = await fetcher({
@@ -79,6 +79,11 @@ const page: FC<pageProps> = async ({ params }) => {
   })
   const { isWaitPay } = parkInfo
 
+  const accountList = await fetcher({
+    url: `/api/account?mallId=${mallId}`,
+    method: 'GET'
+  })
+
   return (
     <div>
       <div>
@@ -100,6 +105,7 @@ const page: FC<pageProps> = async ({ params }) => {
               mallId={mallId}
               parkId={parkId}
               projectType={projectType}
+              accountList={accountList}
             />
           )
         ) : (

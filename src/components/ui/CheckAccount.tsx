@@ -11,6 +11,7 @@ interface CheckAccountProps {
 
 const CheckAccount: FC<CheckAccountProps> = (props) => {
   const { plateNo, accountList = [], selected, setSelected } = props
+
   return (
     <CheckboxGroup
       label={`${plateNo}: Select pay account`}
@@ -19,13 +20,28 @@ const CheckAccount: FC<CheckAccountProps> = (props) => {
     >
       {accountList.map((item: AccountItem, index: number) => {
         return (
-          <Checkbox key={index} value={item.openId}>
+          <Checkbox key={index} value={item.name}>
             {item.name}
           </Checkbox>
         )
       })}
     </CheckboxGroup>
   )
+  // return (
+  //   <CheckboxGroup
+  //     label={`${plateNo}: Select pay account`}
+  //     value={selected}
+  //     onValueChange={setSelected}
+  //   >
+  //     {accountList.map((item: AccountItem, index: number) => {
+  //       return (
+  //         <Checkbox key={index} value={item.openId}>
+  //           {item.name}
+  //         </Checkbox>
+  //       )
+  //     })}
+  //   </CheckboxGroup>
+  // )
 }
 
 export default CheckAccount

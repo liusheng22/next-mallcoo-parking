@@ -1,11 +1,11 @@
 import { failed, success } from '@/helper/response'
 import { AccountItem } from '@/types/ui'
-import { cosDb } from '@/utils/db'
 import { NextRequest } from 'next/server'
-import { getQueryKey } from 'utils/api-route'
+import { getQueryValue } from 'utils/api-route'
+import { cosDb } from 'utils/db'
 
 export async function GET(req: NextRequest) {
-  const mallId = getQueryKey(req, 'mallId')
+  const mallId = getQueryValue(req, 'mallId')
   if (!mallId) {
     return failed('mallId is required')
   }

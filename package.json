@@ -4,12 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "serve": "NODE_ENV=development node server.js",
     "build": "next build",
     "start": "next start",
     "export": "next build && next export",
     "lint": "next lint"
   },
   "dependencies": {
+    "@llius/jsonbin-db": "^0.0.3",
     "@nextui-org/react": "^2.2.9",
     "@types/node": "20.5.7",
     "@types/react": "18.2.21",
@@ -24,6 +26,7 @@
     "dayjs": "^1.11.10",
     "eslint": "8.48.0",
     "eslint-config-next": "13.4.19",
+    "express": "^4.18.2",
     "framer-motion": "^10.16.5",
     "fs": "0.0.1-security",
     "http-proxy-middleware": "^2.0.6",

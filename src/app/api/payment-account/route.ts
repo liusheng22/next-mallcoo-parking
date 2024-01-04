@@ -9,7 +9,7 @@ import ScheduleHelper from '@/helper/schedule'
 import { AccountItem, CarConfig, PayInfo } from '@/types/ui'
 import dayjs from 'dayjs'
 import { NextRequest } from 'next/server'
-import { getQueryKey, postText2Json } from 'utils/api-route'
+import { getQueryValue } from 'utils/api-route'
 import { cosDb } from 'utils/db'
 
 // 存储自动缴费的账号信息
@@ -235,7 +235,7 @@ const paymentSchedule = async (query: PayInfo) => {
 
 // 获取当前车牌号下的账号列表
 export async function GET(req: NextRequest) {
-  const plateNo = getQueryKey(req, 'plateNo')
+  const plateNo = getQueryValue(req, 'plateNo')
   if (!plateNo) {
     return failed()
   }
@@ -252,7 +252,32 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   // const { mallId, parkId, projectType, plateNo, selectAccountList } =
   //   (await req.json()) || {}
-  const body = await postText2Json(req)
+
+  const { selected, plateNo, mallId, parkId, projectType } = await req.json()
+
+  const currentMallAccountList: AccountItem[] =
+    (await cosDb.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
+
+  const selectAccountList = currentMallAccountList
+    .filter((item: AccountItem) => {
+      const { name } = item
+      return selected.includes(name)
+    })
+    .map((item: AccountItem) => {
+      return {
+        ...item,
+        isSelected: true
+      }
+    })
+  const body = {
+    plateNo,
+    mallId,
+    parkId,
+    projectType,
+    selectAccountList
+  }
+
+  // const body = await postText2Json(req)
   console.log('post payment-account api body =>', body)
 
   setPaymentAccount(body)
@@ -283,7 +308,7 @@ export async function PUT(req: NextRequest) {
 
 // 移除自动缴费的账号信息
 export async function DELETE(req: NextRequest) {
-  const plateNo = getQueryKey(req, 'plateNo')
+  const plateNo = getQueryValue(req, 'plateNo')
   if (!plateNo) {
     return failed()
   }
@@ -294,7 +319,9 @@ export async function DELETE(req: NextRequest) {
 
   const carConfig: CarConfig =
     (await cosDb.getObjectDefault(`.usingAccount.${plateNo}`)) || {}
-  const { mallId, list: accountList } = carConfig
+  console.log('carConfig =>', carConfig)
+  const { mallId, list } = carConfig
+  const accountList = list || []
   // 未支付的账号
   const unpaidList = accountList.filter((item) => !item.isPaid)
   // 更新商场下的账号状态
