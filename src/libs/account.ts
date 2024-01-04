@@ -36,7 +36,7 @@ export const initAccount = async (mallInfo: any, isForce?: boolean) => {
     }
   }
   console.log('存储后 mallConfig =>', mallConfig)
-  return
+  return mallConfig
 }
 
 /**

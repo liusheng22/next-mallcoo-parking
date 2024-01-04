@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     projectType
   })
   // initSchedule()
-  return success()
+  return success({})
 }
 
 export async function POST(req: NextRequest) {
