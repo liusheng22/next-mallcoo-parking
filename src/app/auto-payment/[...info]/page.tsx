@@ -16,6 +16,26 @@ const getPlateNoInfo = async (plateNo: string) => {
   return data || []
 }
 
+// 获取停车信息
+const getParkInfoApi = async (queryStr: string) => {
+  const parkInfo = await fetcher({
+    url: `/api/mallcoo?${queryStr}`,
+    method: 'GET'
+  })
+
+  return parkInfo || {}
+}
+
+// 账户列表
+const getAccountListApi = async (mallId: string) => {
+  const accountList = await fetcher({
+    url: `/api/account?mallId=${mallId}`,
+    method: 'GET'
+  })
+
+  return accountList || []
+}
+
 const AutoPaymentAccount = ({ plateNo }: { plateNo: string }) => {
   const getData = async (plateNo: string) => {
     return getPlateNoInfo(plateNo)
@@ -28,6 +48,55 @@ const AutoPaymentAccount = ({ plateNo }: { plateNo: string }) => {
     <>
       <UsingPayAccount plateNo={plateNo} usingList={usingList} />
     </>
+  )
+}
+
+interface ParkFeeInfoProps {
+  plateNo: string
+  mallId: string
+  parkId: string
+  projectType: string
+  hasPaymentAccount: boolean
+}
+const ParkFeeInfo = (props: ParkFeeInfoProps) => {
+  const { plateNo, mallId, parkId, projectType, hasPaymentAccount } = props
+  const { uid } = defaultAccountListByMall(mallId)
+
+  // 查询停车信息
+  const queryStr = `uid=${uid}&plateNo=${plateNo}&mallId=${mallId}&parkId=${parkId}`
+  const getParkInfo = async () => {
+    return getParkInfoApi(queryStr)
+  }
+  const getParkInfoFunc = getParkInfo()
+  const parkInfo = use(getParkInfoFunc)
+
+  const { isWaitPay } = parkInfo
+
+  // 查询账户信息
+  const getAccountList = async () => {
+    return getAccountListApi(mallId)
+  }
+  const getAccountListFunc = getAccountList()
+  const accountList = use(getAccountListFunc)
+
+  return (
+    // 是否有待缴费的车辆
+    isWaitPay ? (
+      // 是否有为车辆设置了的自动缴费账户
+      hasPaymentAccount ? (
+        <AutoPaymentAccount plateNo={plateNo} />
+      ) : (
+        <SelectPlateNumber
+          plateNo={plateNo}
+          mallId={mallId}
+          parkId={parkId}
+          projectType={projectType}
+          accountList={accountList}
+        />
+      )
+    ) : (
+      <NotPlateNoInfo plateNo={plateNo} />
+    )
   )
 }
 
@@ -72,17 +141,18 @@ const page: FC<pageProps> = async ({ params }) => {
   hasPaymentAccount =
     autoPaymentAccountList && autoPaymentAccountList.length > 0
 
-  const queryStr = `uid=${uid}&plateNo=${plateNo}&mallId=${mallId}&parkId=${parkId}`
-  const parkInfo = await fetcher({
-    url: `/api/mallcoo?${queryStr}`,
-    method: 'GET'
-  })
-  const { isWaitPay } = parkInfo
+  // const queryStr = `uid=${uid}&plateNo=${plateNo}&mallId=${mallId}&parkId=${parkId}`
+  // const parkInfo = await fetcher({
+  //   url: `/api/mallcoo?${queryStr}`,
+  //   method: 'GET'
+  // })
 
-  const accountList = await fetcher({
-    url: `/api/account?mallId=${mallId}`,
-    method: 'GET'
-  })
+  // const { isWaitPay } = parkInfo
+
+  // const accountList = await fetcher({
+  //   url: `/api/account?mallId=${mallId}`,
+  //   method: 'GET'
+  // })
 
   return (
     <div>
@@ -93,7 +163,14 @@ const page: FC<pageProps> = async ({ params }) => {
         <div>parkId: {parkId}</div>
         {/* <div>mallConfig: {JSON.stringify(mallConfig)}</div> */}
       </div>
-      {
+      <ParkFeeInfo
+        plateNo={plateNo}
+        mallId={mallId}
+        parkId={parkId}
+        projectType={projectType}
+        hasPaymentAccount={hasPaymentAccount}
+      />
+      {/* {
         // 是否有待缴费的车辆
         isWaitPay ? (
           // 是否有为车辆设置了的自动缴费账户
@@ -111,7 +188,7 @@ const page: FC<pageProps> = async ({ params }) => {
         ) : (
           <NotPlateNoInfo plateNo={plateNo} />
         )
-      }
+      } */}
     </div>
   )
 }

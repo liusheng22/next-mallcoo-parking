@@ -27,7 +27,7 @@ const InputPlateNo: FC<Props> = (props) => {
     const mallIdVal = [...mallId][0]
     const { parkId, projectType } = mallConfig
 
-    fetcher({
+    await fetcher({
       url: `/api/task?mallId=${mallIdVal}&parkId=${parkId}&projectType=${projectType}`
     })
 
