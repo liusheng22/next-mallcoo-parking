@@ -13,7 +13,9 @@ export const initAccount = async (mallInfo: any, isForce?: boolean) => {
   const dbMallConfig: MallConfig =
     (await cosDb.getObjectDefault(`.mallWithAccount.${mallId}`)) || {}
   const { list: dbAccountList } = dbMallConfig
+  console.log('dbMallConfig =>', dbMallConfig)
   const accountList = accountListByMall(mallId)
+  console.log('accountList =>', accountList)
 
   const mallConfig = {
     mallId,
@@ -21,6 +23,7 @@ export const initAccount = async (mallInfo: any, isForce?: boolean) => {
     projectType,
     list: accountList
   }
+  console.log('存储前 mallConfig =>', mallConfig)
   if (isForce) {
     // 定时更新
     if (dbAccountList && dbAccountList.length) {
@@ -32,7 +35,7 @@ export const initAccount = async (mallInfo: any, isForce?: boolean) => {
       await cosDb.push(`.mallWithAccount.${mallId}`, mallConfig, false)
     }
   }
-  console.log('mallConfig =>', mallConfig)
+  console.log('存储后 mallConfig =>', mallConfig)
   return
 }
 
