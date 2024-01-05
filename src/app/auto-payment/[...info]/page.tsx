@@ -1,7 +1,7 @@
-import { fetcher } from '@/app/composables/use-fetcher'
-import NotPlateNoInfo from '@/components/ui/NotPlateNoInfo'
 import { defaultAccountListByMall } from '@/constants'
-import { AccountItem, MallConfig } from '@/types/ui'
+import { CarConfig, MallConfig } from '@/types/ui'
+import { fetcher } from 'app/composables/use-fetcher'
+import NotPlateNoInfo from 'components/ui/NotPlateNoInfo'
 import UsingPayAccount from 'components/ui/UsingPayAccount'
 import { FC, use } from 'react'
 import SelectPlateNumber from 'ui/SelectPlateNumber'
@@ -106,11 +106,25 @@ interface pageProps {
   }
 }
 
+interface JsonBinData {
+  mallWithAccount?: {
+    [key: string]: MallConfig
+  }
+  usingAccount?: {
+    [key: string]: CarConfig
+  }
+}
+
 const page: FC<pageProps> = async ({ params }) => {
   const [mallId, queryPlateNo] = params.info || []
-  const mallConfig = ((await cosDb.getObjectDefault(
-    `.mallWithAccount.${mallId}`
-  )) || {}) as MallConfig
+  const jsonBinData = (await cosDb.getObjectDefault(`.`)) as JsonBinData
+  const { mallWithAccount = {}, usingAccount = {} } = jsonBinData || {}
+  const mallConfig = mallWithAccount[mallId]
+
+  // const mallConfig = ((await cosDb.getObjectDefault(
+  //   `.mallWithAccount.${mallId}`
+  // )) || {}) as MallConfig
+
   // const mallConfig = ((await cosDb.getObjectDefault(
   //   `.mallWithAccount.${mallId}`
   // )) || {}) as MallConfig
@@ -134,12 +148,16 @@ const page: FC<pageProps> = async ({ params }) => {
   const plateNo = decodeURIComponent(queryPlateNo).toUpperCase()
 
   // 是否有为车辆设置了的自动缴费账户
+  // let hasPaymentAccount = false
+  // const autoPaymentAccountList: AccountItem[] =
+  //   (await cosDb.getObjectDefault(`.usingAccount.${plateNo}.list`)) || []
+  // console.log('autoPaymentAccountList =>', autoPaymentAccountList)
+  // hasPaymentAccount = autoPaymentAccountList && !!autoPaymentAccountList.length
+
   let hasPaymentAccount = false
-  const autoPaymentAccountList: AccountItem[] =
-    (await cosDb.getObjectDefault(`.usingAccount.${plateNo}.list`)) || []
-  console.log('autoPaymentAccountList =>', autoPaymentAccountList)
-  hasPaymentAccount =
-    autoPaymentAccountList && autoPaymentAccountList.length > 0
+  const carConfig = usingAccount[plateNo]
+  const { list = [] } = carConfig || {}
+  hasPaymentAccount = list && !!list.length
 
   // const queryStr = `uid=${uid}&plateNo=${plateNo}&mallId=${mallId}&parkId=${parkId}`
   // const parkInfo = await fetcher({
