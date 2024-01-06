@@ -20,9 +20,7 @@ export async function GET(req: NextRequest) {
   return success(data)
 }
 
-export async function POST() {
-  return success({
-    success: true,
-    data: { key: 'post demo-api' }
-  })
+export async function POST(req: NextRequest) {
+  const json = await req.json()
+  return success(json)
 }

@@ -13,15 +13,14 @@ export const fetchGetParkFeeInit: any = async (query: PayInfo) => {
     MallID: mallId,
     ParkID: parkId,
     Barcode: '',
-    IsVerifyWaitPay: true,
-    Header: {}
+    IsVerifyWaitPay: true
   }
   console.log('fetchGetParkFeeInit params =>', params)
 
   const [ok, data] = await mallcooFetcher({
     url,
     method: 'POST',
-    data: params
+    data: JSON.stringify(params)
   })
   console.log('fetchGetParkFeeInit data =>', data)
   if (!ok) {
