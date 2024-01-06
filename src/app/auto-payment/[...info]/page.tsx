@@ -1,5 +1,5 @@
 import { defaultAccountListByMall } from '@/constants'
-import { CarConfig, MallConfig } from '@/types/ui'
+import { JsonBinData } from '@/types/ui'
 import { fetcher } from 'app/composables/use-fetcher'
 import NotPlateNoInfo from 'components/ui/NotPlateNoInfo'
 import UsingPayAccount from 'components/ui/UsingPayAccount'
@@ -106,15 +106,6 @@ const ParkFeeInfo = (props: ParkFeeInfoProps) => {
 interface pageProps {
   params: {
     info: string[]
-  }
-}
-
-interface JsonBinData {
-  mallWithAccount?: {
-    [key: string]: MallConfig
-  }
-  usingAccount?: {
-    [key: string]: CarConfig
   }
 }
 

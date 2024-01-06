@@ -53,3 +53,12 @@ export interface MallItem {
   projectType?: string
   parkId: string
 }
+
+export interface JsonBinData {
+  mallWithAccount?: {
+    [key: string]: MallConfig
+  }
+  usingAccount?: {
+    [key: string]: CarConfig
+  }
+}

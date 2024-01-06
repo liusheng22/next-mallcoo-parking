@@ -16,11 +16,17 @@ export const fetchGetParkFeeInit: any = async (query: PayInfo) => {
     Header: {}
   }
 
-  const [, data] = await mallcooFetcher({
+  const [ok, data] = await mallcooFetcher({
     url,
     method: 'POST',
     data: params
   })
+  console.log('fetchGetParkFeeInit data =>', data)
+  if (!ok) {
+    return {
+      EntryTime: ''
+    }
+  }
 
   return data
 }

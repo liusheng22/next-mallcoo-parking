@@ -1,6 +1,6 @@
 import { fetchGetParkFeeInit } from '@/helper/payment/park-fee'
 import { success } from '@/helper/response'
-import { AccountItem } from '@/types/ui'
+import { AccountItem, JsonBinData } from '@/types/ui'
 import dayjs from 'dayjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { getQuery } from 'utils/api-route'
@@ -24,19 +24,37 @@ export async function GET(req: NextRequest) {
   if (EntryTime && dayjs(EntryTime).isValid()) {
     isWaitPay = true
   } else {
+    const jsonBinData: JsonBinData = await cosDb.getObjectDefault(`.`)
+    const { mallWithAccount = {}, usingAccount = {} } = jsonBinData || {}
+    const mallConfig = mallWithAccount[mallId]
+    const { list: accountList } = mallConfig || {}
+
+    const carConfig = usingAccount[plateNo]
+    const { list: paymentAccountList } = carConfig || {}
+
     // 无待缴费的车辆信息，清空 db 中的车辆信息
-    const paymentAccountList = (await cosDb.getObjectDefault(
-      `.usingAccount.${plateNo}.list`,
-      []
-    )) as AccountItem[]
+    // const paymentAccountList = (await cosDb.getObjectDefault(
+    //   `.usingAccount.${plateNo}.list`,
+    //   []
+    // )) as AccountItem[]
     // 未使用的账号
     const unUsedOpenIdList = paymentAccountList
       .filter((item: AccountItem) => !item.isPaid)
       .map((item: AccountItem) => item.openId)
     // 反哺到原始数据
-    const accountList: AccountItem[] =
-      (await cosDb.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
-    const list = accountList.map((item: AccountItem) => {
+    // const accountList: AccountItem[] =
+    //   (await cosDb.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
+    // const list = accountList.map((item: AccountItem) => {
+    //   if (unUsedOpenIdList.includes(item.openId)) {
+    //     return {
+    //       ...item,
+    //       isSelected: false
+    //     }
+    //   }
+    //   return item
+    // })
+
+    const list = (accountList || []).map((item: AccountItem) => {
       if (unUsedOpenIdList.includes(item.openId)) {
         return {
           ...item,
@@ -45,10 +63,13 @@ export async function GET(req: NextRequest) {
       }
       return item
     })
-    // 重新设置 .accountList
-    await cosDb.push(`.mallWithAccount.${mallId}.list`, list, true)
 
-    await cosDb.delete(`.usingAccount.${plateNo}`)
+    // 重新设置 .accountList
+    // await cosDb.push(`.mallWithAccount.${mallId}.list`, list, true)
+    // await cosDb.delete(`.usingAccount.${plateNo}`)
+
+    await cosDb.push(`.mallWithAccount.${mallId}.list`, list, true)
+    cosDb.delete(`.usingAccount.${plateNo}`)
   }
 
   return success({
