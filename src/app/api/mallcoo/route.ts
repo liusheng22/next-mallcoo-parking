@@ -11,6 +11,8 @@ export async function GET(req: NextRequest) {
   console.log('getMallcooApi query =>', query)
   const { uid, plateNo, mallId, parkId } = query || {}
 
+  return success(query)
+
   // 查询待缴费信息，根据 EntryTime 判断是否车辆在场
   const data = await fetchGetParkFeeInit({
     uid,

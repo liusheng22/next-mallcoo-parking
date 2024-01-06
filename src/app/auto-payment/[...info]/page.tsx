@@ -19,6 +19,7 @@ const getPlateNoInfo = async (plateNo: string) => {
 
 // 获取停车信息
 const getParkInfoApi = async (queryStr: string) => {
+  console.log('getParkInfoApi queryStr =>', queryStr)
   const parkInfo = await fetcher({
     url: `/api/mallcoo?${queryStr}`,
     method: 'GET'
@@ -67,11 +68,13 @@ const ParkFeeInfo = (props: ParkFeeInfoProps) => {
 
   // 查询停车信息
   const queryStr = `uid=${uid}&plateNo=${plateNo}&mallId=${mallId}&parkId=${parkId}`
+  console.log('ParkFeeInfo queryStr =>', queryStr)
   const getParkInfo = async () => {
     return getParkInfoApi(queryStr)
   }
   const getParkInfoFunc = getParkInfo()
   const parkInfo = use(getParkInfoFunc)
+  console.log('ParkFeeInfo parkInfo =>', parkInfo)
 
   const { isWaitPay } = parkInfo
 
