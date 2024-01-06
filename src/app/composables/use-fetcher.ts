@@ -33,8 +33,8 @@ export const fetcher = async (args: FetchRequest) => {
   // 如果 url 没有请求头，就加上
   if (!url.includes('http')) {
     // let isDev = false
-    // const prefix = 'https://mallcoo-parking.vercel.app/'
-    const prefix = 'https://mallcoo-parking.zeabur.app/'
+    const prefix = 'https://mallcoo-parking.vercel.app/'
+    // const prefix = 'https://mallcoo-parking.zeabur.app/'
     // const prefix = 'http://localhost:3000/'
     // try {
     //   // 判断是否是本地开发环境
