@@ -55,9 +55,14 @@ export const fetcher = async (args: FetchRequest) => {
     method: args.method,
     body,
     ...args
-  }).then((res) => {
-    return res.json()
   })
+    .then((res) => {
+      console.log(`${url} fetch res =>`, res)
+      return res.json()
+    })
+    .catch((err) => {
+      console.log('fetch err =>', err)
+    })
 
   console.log(`${url} 结果 =>`, response)
 
