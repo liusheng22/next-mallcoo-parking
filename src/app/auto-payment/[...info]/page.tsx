@@ -25,7 +25,7 @@ const getParkInfoApi = async (queryStr: string) => {
     isWaitPay: true
   }
   const testData = await fetcher({
-    url: `/api/mallcoo?${queryStr}`,
+    url: `/api/mallcoo/info?${queryStr}`,
     method: 'GET'
   })
   console.log('testData:', testData)
