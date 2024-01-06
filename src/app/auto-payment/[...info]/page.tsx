@@ -12,6 +12,7 @@ const getPlateNoInfo = async (plateNo: string) => {
     url: `/api/payment-account?plateNo=${plateNo}`,
     method: 'GET'
   })
+  console.log('车辆信息 data =>', data)
 
   return data || []
 }
@@ -22,6 +23,7 @@ const getParkInfoApi = async (queryStr: string) => {
     url: `/api/mallcoo?${queryStr}`,
     method: 'GET'
   })
+  console.log('停车信息 parkInfo =>', parkInfo)
 
   return parkInfo || {}
 }
@@ -32,6 +34,7 @@ const getAccountListApi = async (mallId: string) => {
     url: `/api/account?mallId=${mallId}`,
     method: 'GET'
   })
+  console.log('账户列表 accountList =>', accountList)
 
   return accountList || []
 }
