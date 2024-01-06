@@ -20,10 +20,13 @@ const getPlateNoInfo = async (plateNo: string) => {
 // 获取停车信息
 const getParkInfoApi = async (queryStr: string) => {
   console.log('getParkInfoApi queryStr =>', queryStr)
-  const parkInfo = await fetcher({
-    url: `/api/mallcoo?${queryStr}`,
-    method: 'GET'
-  })
+  const parkInfo = {
+    queryStr
+  }
+  // const parkInfo = await fetcher({
+  //   url: `/api/mallcoo?${queryStr}`,
+  //   method: 'GET'
+  // })
   console.log('停车信息 parkInfo =>', parkInfo)
 
   return parkInfo || {}
