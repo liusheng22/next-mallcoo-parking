@@ -236,6 +236,7 @@ const paymentSchedule = async (query: PayInfo) => {
 // 获取当前车牌号下的账号列表
 export async function GET(req: NextRequest) {
   const plateNo = getQueryValue(req, 'plateNo')
+  console.log('getPaymentAccountApi plateNo =>', plateNo)
   if (!plateNo) {
     return failed()
   }

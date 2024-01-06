@@ -6,6 +6,7 @@ import { cosDb } from 'utils/db'
 
 export async function GET(req: NextRequest) {
   const mallId = getQueryValue(req, 'mallId')
+  console.log('getAccountApi mallId =>', mallId)
   if (!mallId) {
     return failed('mallId is required')
   }
