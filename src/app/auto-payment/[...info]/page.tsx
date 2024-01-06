@@ -117,9 +117,11 @@ interface JsonBinData {
 
 const page: FC<pageProps> = async ({ params }) => {
   const [mallId, queryPlateNo] = params.info || []
-  const jsonBinData = (await cosDb.getObjectDefault(`.`)) as JsonBinData
+  const jsonBinData: JsonBinData = await cosDb.getObjectDefault(`.`)
   const { mallWithAccount = {}, usingAccount = {} } = jsonBinData || {}
   const mallConfig = mallWithAccount[mallId]
+  console.log('jsonBinData =>', jsonBinData)
+  console.log('mallConfig =>', mallConfig)
 
   // const mallConfig = ((await cosDb.getObjectDefault(
   //   `.mallWithAccount.${mallId}`
@@ -156,8 +158,11 @@ const page: FC<pageProps> = async ({ params }) => {
 
   let hasPaymentAccount = false
   const carConfig = usingAccount[plateNo]
+  console.log('usingAccount =>', usingAccount)
+  console.log('carConfig =>', carConfig)
   const { list = [] } = carConfig || {}
   hasPaymentAccount = list && !!list.length
+  console.log('hasPaymentAccount =>', hasPaymentAccount)
 
   // const queryStr = `uid=${uid}&plateNo=${plateNo}&mallId=${mallId}&parkId=${parkId}`
   // const parkInfo = await fetcher({

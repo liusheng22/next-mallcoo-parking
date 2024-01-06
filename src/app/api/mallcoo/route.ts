@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
     mallId,
     parkId
   })
+  console.log('查询停车信息 =>', data)
   const { EntryTime } = data || {}
   // 是否有待缴费
   let isWaitPay = false
@@ -49,38 +50,6 @@ export async function GET(req: NextRequest) {
 
     await cosDb.delete(`.usingAccount.${plateNo}`)
   }
-
-  // data = {
-  //   isWaitPay: true,
-  //   UID: 0,
-  //   Bonus: 0,
-  //   WaitPayOrderId: 0,
-  //   MallName: '成都港汇天地',
-  //   ParkName: '成都港汇天地停车场',
-  //   PlateNo: '川F5N0S2',
-  //   Barcode: '',
-  //   EntryTime: '2023-11-27 08:02:24',
-  //   ParkingMinutes: 629,
-  //   ParkingTotalFee: 5500,
-  //   ParkingFee: 1000,
-  //   PaidAmount: 4500,
-  //   FreeAmount: 0,
-  //   IsShowParkZeroPay: false,
-  //   NeedPayAmount: 1000,
-  //   ParkTel: '028-6011 3888',
-  //   IsAccessPC: false,
-  //   RegisterGuide: '',
-  //   DelayTime: 30,
-  //   IsUseRights: true,
-  //   FeeId: 'd821d1d22db4476e832e4ed798ad69d0',
-  //   RightsRuleModelList: [],
-  //   DiscountLimit: {}
-  // }
-
-  // return nextResponse.success({
-  //   isWaitPay,
-  //   ...data
-  // })
 
   return success({
     isWaitPay,
