@@ -54,6 +54,11 @@ export const fetcher = async (args: FetchRequest) => {
   const response = await fetch(args.url, {
     method: args.method,
     body,
+    headers: {
+      referer: 'https://m.mallcoo.cn/',
+      'user-agent':
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 11_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E217 MicroMessenger/6.8.0(0x16080000) NetType/WIFI Language/en Branch/Br_trunk MiniProgramEnv/Mac'
+    },
     ...args
   })
     .then((res) => {
