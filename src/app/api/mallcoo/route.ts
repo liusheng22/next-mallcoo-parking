@@ -7,7 +7,9 @@ import { getQuery } from 'utils/api-route'
 import { cosDb } from 'utils/db'
 
 export async function GET(req: NextRequest) {
-  const { uid, plateNo, mallId, parkId } = getQuery(req)
+  const query = getQuery(req)
+  console.log('getMallcooApi query =>', query)
+  const { uid, plateNo, mallId, parkId } = query || {}
 
   // 查询待缴费信息，根据 EntryTime 判断是否车辆在场
   const data = await fetchGetParkFeeInit({

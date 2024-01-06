@@ -3,6 +3,7 @@ import mallcooFetcher from 'utils/wrapper-mallcoo'
 
 // 先获取停车信息，拿到 => ParkingMinutes PaidAmount
 export const fetchGetParkFeeInit: any = async (query: PayInfo) => {
+  console.log('fetchGetParkFeeInit query =>', query)
   const { uid, mallId, plateNo, parkId } = query
   const url = 'https://m.mallcoo.cn/api/park/ParkFee/GetParkFeeInit'
 
@@ -15,6 +16,7 @@ export const fetchGetParkFeeInit: any = async (query: PayInfo) => {
     IsVerifyWaitPay: true,
     Header: {}
   }
+  console.log('fetchGetParkFeeInit params =>', params)
 
   const [ok, data] = await mallcooFetcher({
     url,
