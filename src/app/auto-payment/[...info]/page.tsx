@@ -21,7 +21,8 @@ const getPlateNoInfo = async (plateNo: string) => {
 const getParkInfoApi = async (queryStr: string) => {
   console.log('getParkInfoApi queryStr =>', queryStr)
   const parkInfo = {
-    queryStr
+    queryStr: queryStr,
+    isWaitPay: true
   }
   // const parkInfo = await fetcher({
   //   url: `/api/mallcoo?${queryStr}`,
