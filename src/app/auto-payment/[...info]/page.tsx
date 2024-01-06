@@ -24,14 +24,14 @@ const getParkInfoApi = async (queryStr: string) => {
     queryStr: queryStr,
     isWaitPay: true
   }
-  const testData = fetcher({
+  const testData = await fetcher({
     url: `/api/mallcoo?${queryStr}`,
     method: 'GET'
   })
   console.log('testData:', testData)
   console.log('停车信息 parkInfo =>', parkInfo)
 
-  return parkInfo || {}
+  return testData || parkInfo || {}
 }
 
 // 账户列表
