@@ -13,19 +13,20 @@ const nextConfig = {
   // },
   env: {
     // API_URL: process.env.NEXT_APP_API_URL
-  },
-  async rewrites() {
-    return [
-      {
-        source: '/apiPark/:path*',
-        destination: 'https://m.mallcoo.cn/api/park/:path*'
-      },
-      {
-        source: '/api/:path*',
-        destination: 'https://m.mallcoo.cn/a/liteapp/api/:path*' // Replace with your target URL
-      }
-    ]
   }
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: '/apiPark/:path*',
+  //       destination: 'https://m.mallcoo.cn/api/park/:path*'
+  //     },
+  //     {
+  //       source: '/api/:path*',
+  //       destination: 'https://m.mallcoo.cn/a/liteapp/api/:path*' // Replace with your target URL
+  //     }
+  //   ]
+  // }
+
   // async serverMiddleware() {
   //   const proxy = createProxyMiddleware('/api', {
   //     target: 'https://m.mallcoo.cn/a/liteapp/api', // Replace with your target URL

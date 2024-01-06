@@ -24,9 +24,7 @@ export const fetchGetParkFeeInit: any = async (query: PayInfo) => {
   })
   console.log('fetchGetParkFeeInit data =>', data)
   if (!ok) {
-    return {
-      EntryTime: ''
-    }
+    return {}
   }
 
   return data

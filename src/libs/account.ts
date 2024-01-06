@@ -58,8 +58,8 @@ export const initSchedule = () => {
       console.log('-- 0 点执行 --', new Date())
       console.log('-- 0 点数据 --', mallList)
       for (let i = 0; i < mallList.length; i++) {
-        const { mallId } = mallList[i]
-        await initAccount({ mallId }, true)
+        const { mallId, parkId, projectType } = mallList[i]
+        await initAccount({ mallId, parkId, projectType }, true)
       }
     }
   })

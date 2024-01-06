@@ -53,7 +53,6 @@ export const fetcher = async (args: FetchRequest) => {
   // 使用 fetch 进行请求
   const response = await fetch(args.url, {
     method: args.method,
-    headers: {},
     body,
     ...args
   }).then((res) => {
