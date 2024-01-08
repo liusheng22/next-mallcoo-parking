@@ -3,7 +3,7 @@
 import { fetcher } from '@/app/composables/use-fetcher'
 import { AccountItem } from '@/types/ui'
 import { useRouter } from 'next/navigation'
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import CheckAccount from './CheckAccount'
 import FullButton from './FullButton'
 
@@ -12,12 +12,13 @@ interface Props {
   parkId: string
   plateNo: string
   projectType: string
+  accountList: AccountItem[]
 }
 
 const ChooseSingleAccount: FC<Props> = (props) => {
-  const { plateNo, mallId } = props
+  const { plateNo, mallId, accountList } = props
   const router = useRouter()
-  const [accountList, setAccountList] = useState<AccountItem[]>([])
+  // const [accountList, setAccountList] = useState<AccountItem[]>([])
   const [selected, setSelected] = useState<string[]>([])
 
   const submit = async () => {
@@ -40,17 +41,17 @@ const ChooseSingleAccount: FC<Props> = (props) => {
     router.refresh()
   }
 
-  const getAccountList = async () => {
-    const data = await fetcher({
-      url: `/api/account?mallId=${mallId}`,
-      method: 'GET'
-    })
-    setAccountList(data)
-  }
+  // const getAccountList = async () => {
+  //   const data = await fetcher({
+  //     url: `/api/account?mallId=${mallId}`,
+  //     method: 'GET'
+  //   })
+  //   setAccountList(data)
+  // }
 
-  useEffect(() => {
-    getAccountList()
-  }, [])
+  // useEffect(() => {
+  //   getAccountList()
+  // }, [])
 
   return (
     <>
