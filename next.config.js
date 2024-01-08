@@ -1,7 +1,7 @@
 // const { createProxyMiddleware } = require('http-proxy-middleware')
 
 /** @type {import('next').NextConfig} */
-const path = require('node:path')
+// const path = require('node:path')
 
 const nextConfig = {
   // 启动端口
