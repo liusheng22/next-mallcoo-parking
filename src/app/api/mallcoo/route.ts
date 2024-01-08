@@ -29,10 +29,12 @@ export async function GET(req: NextRequest) {
     const jsonBinData: JsonBinData = await cosDb.getObjectDefault(`.`)
     const { mallWithAccount = {}, usingAccount = {} } = jsonBinData || {}
     const mallConfig = mallWithAccount[mallId]
-    const { list: accountList } = mallConfig || {}
+    let { list: accountList } = mallConfig || {}
+    accountList = accountList || []
 
     const carConfig = usingAccount[plateNo]
-    const { list: paymentAccountList } = carConfig || {}
+    let { list: paymentAccountList } = carConfig || {}
+    paymentAccountList = paymentAccountList || []
 
     // 无待缴费的车辆信息，清空 db 中的车辆信息
     // const paymentAccountList = (await cosDb.getObjectDefault(
