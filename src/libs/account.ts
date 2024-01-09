@@ -2,7 +2,7 @@ import { accountListByMall, mallList } from '@/constants'
 import { RESET_KEY } from '@/constants/schedule'
 import ScheduleHelper from '@/helper/schedule'
 import { MallConfig } from '@/types/ui'
-import { cosDb } from '@/utils/db'
+import { jsonBinDb } from '@/utils/db'
 
 /**
  * 初始化账号列表
@@ -11,7 +11,7 @@ import { cosDb } from '@/utils/db'
 export const initAccount = async (mallInfo: any, isForce?: boolean) => {
   const { mallId, parkId, projectType } = mallInfo
   const dbMallConfig: MallConfig =
-    (await cosDb.getObjectDefault(`.mallWithAccount.${mallId}`)) || {}
+    (await jsonBinDb.getObjectDefault(`.mallWithAccount.${mallId}`)) || {}
   const { list: dbAccountList } = dbMallConfig
   console.log('dbMallConfig =>', dbMallConfig)
   const accountList = accountListByMall(mallId)
@@ -27,12 +27,12 @@ export const initAccount = async (mallInfo: any, isForce?: boolean) => {
   if (isForce) {
     // 定时更新
     if (dbAccountList && dbAccountList.length) {
-      await cosDb.push(`.mallWithAccount.${mallId}.list`, accountList, true)
+      await jsonBinDb.push(`.mallWithAccount.${mallId}.list`, accountList, true)
     }
   } else {
     // 手动更新
     if (!dbAccountList || !dbAccountList.length) {
-      await cosDb.push(`.mallWithAccount.${mallId}`, mallConfig, false)
+      await jsonBinDb.push(`.mallWithAccount.${mallId}`, mallConfig, false)
     }
   }
   console.log('存储后 mallConfig =>', mallConfig)

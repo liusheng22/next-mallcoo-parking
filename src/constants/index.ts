@@ -1,5 +1,6 @@
+import account from '@/json/mall-with-account.json'
+import mallListJson from '@/json/mall.json'
 import { AccountItem, MallItem } from '@/types/ui'
-import account from '../../mall-with-account.json'
 
 // 定义 mallWithAccount 的类型
 interface MallWithAccount {
@@ -24,28 +25,7 @@ export const accountListByMall = (mallId: string) => {
 }
 
 // 商场列表
-export const mallList: MallItem[] = [
-  {
-    id: 1,
-    name: '港汇天地',
-    mallId: '11707',
-    parkId: '985',
-    projectType: '16706'
-  },
-  {
-    id: 2,
-    name: '远大购物中心',
-    mallId: '11526',
-    parkId: '985'
-  },
-  {
-    id: 3,
-    name: '三利爱琴海',
-    mallId: '12689',
-    parkId: '1550',
-    projectType: '17464'
-  }
-]
+export const mallList: MallItem[] = mallListJson
 
 // mallId 对应的 信息
 export const mallInfo = (mallId: string) => {
