@@ -4,10 +4,10 @@
 # get {{baseUrl}}/api/demo/db?plateNo=川F5N0S2
 # get {{baseUrl}}/api/demo/db?mallId=11707
 # get https://mallcoo-parking.vercel.app/api/demo/db?mallId=11707
-get {{baseUrl}}/api/local-db?mainKey=mallWithAccount&minorKey=11707
+get {{baseUrl}}/api/demo/db?mainKey=mallWithAccount&minorKey=11707
 
 ###
-post {{baseUrl}}/api/local-db
+post {{baseUrl}}/api/demo/db
 Content-Type: {{contentType}}
 
 {}
