@@ -27,21 +27,6 @@ const CheckAccount: FC<CheckAccountProps> = (props) => {
       })}
     </CheckboxGroup>
   )
-  // return (
-  //   <CheckboxGroup
-  //     label={`${plateNo}: Select pay account`}
-  //     value={selected}
-  //     onValueChange={setSelected}
-  //   >
-  //     {accountList.map((item: AccountItem, index: number) => {
-  //       return (
-  //         <Checkbox key={index} value={item.openId}>
-  //           {item.name}
-  //         </Checkbox>
-  //       )
-  //     })}
-  //   </CheckboxGroup>
-  // )
 }
 
 export default CheckAccount

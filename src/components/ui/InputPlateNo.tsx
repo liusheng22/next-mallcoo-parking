@@ -31,7 +31,6 @@ const InputPlateNo: FC<Props> = (props) => {
       url: `/api/task?mallId=${mallIdVal}&parkId=${parkId}&projectType=${projectType}`
     })
 
-    // props.toLink(`/auto-payment/${mallIdVal}/${plateNo}`)
     props.toLinkQuery(`${mallIdVal}/${plateNo}`)
   }
 

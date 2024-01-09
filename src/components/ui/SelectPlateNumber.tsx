@@ -3,7 +3,7 @@
 import { fetcher } from '@/app/composables/use-fetcher'
 import { AccountItem } from '@/types/ui'
 import { useRouter } from 'next/navigation'
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import { sleep } from 'utils/timeout'
 import CheckAccount from './CheckAccount'
 import FullButton from './FullButton'
@@ -19,29 +19,9 @@ interface Props {
 const SelectPlateNumber: FC<Props> = (props) => {
   const { plateNo, mallId, parkId, projectType, accountList } = props
   const router = useRouter()
-  // const [accountList, setAccountList] = useState<AccountItem[]>([])
   const [selected, setSelected] = useState<string[]>([])
 
   const setCarPaymentInfo = async (selected: string[]) => {
-    // const selectAccountList = accountList
-    //   .filter((item: AccountItem) => {
-    //     const { name } = item
-    //     return selected.includes(name)
-    //   })
-    //   .map((item: AccountItem) => {
-    //     return {
-    //       ...item,
-    //       isSelected: true
-    //     }
-    //   })
-    // const params = {
-    //   plateNo,
-    //   mallId,
-    //   parkId,
-    //   projectType,
-    //   selectAccountList
-    // }
-
     return await fetcher({
       url: `/api/payment-account?plateNo=${plateNo}`,
       method: 'POST',
@@ -71,25 +51,10 @@ const SelectPlateNumber: FC<Props> = (props) => {
     // router.push('/indexs')
   }
 
-  // const getAccountList = async () => {
-  //   const data = await fetcher({
-  //     url: `/api/account?mallId=${mallId}`,
-  //     method: 'GET'
-  //   })
-  //   setAccountList(data)
-  // }
-
-  useEffect(() => {
-    // getAccountList()
-  }, [])
-
-  const isFlag = true
-
   return (
     <>
       <div className="flex w-full flex-col md:flex-nowrap gap-4">
-        {/* {accountList.length ? ( */}
-        {isFlag ? (
+        {accountList.length ? (
           <>
             <CheckAccount
               plateNo={plateNo}

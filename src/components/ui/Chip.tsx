@@ -8,7 +8,11 @@ interface chipProps {
 }
 
 const chip: FC<chipProps> = ({ plateNo }) => {
-  return <Chip color="primary" variant="dot">{plateNo}</Chip>
+  return (
+    <Chip color="primary" variant="dot">
+      {plateNo}
+    </Chip>
+  )
 }
 
 export default chip

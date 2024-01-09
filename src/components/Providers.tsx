@@ -12,11 +12,7 @@ interface ProvidersProps {
 const Providers: FC<ProvidersProps> = ({ children }) => {
   const router = useRouter()
 
-  return (
-    <NextUIProvider navigate={router.push}>
-      {children}
-    </NextUIProvider>
-  )
+  return <NextUIProvider navigate={router.push}>{children}</NextUIProvider>
 }
 
 export default Providers

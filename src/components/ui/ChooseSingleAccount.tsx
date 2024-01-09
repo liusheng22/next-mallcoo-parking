@@ -18,7 +18,6 @@ interface Props {
 const ChooseSingleAccount: FC<Props> = (props) => {
   const { plateNo, mallId, accountList } = props
   const router = useRouter()
-  // const [accountList, setAccountList] = useState<AccountItem[]>([])
   const [selected, setSelected] = useState<string[]>([])
 
   const submit = async () => {
@@ -40,18 +39,6 @@ const ChooseSingleAccount: FC<Props> = (props) => {
     // todo: toast 成功
     router.refresh()
   }
-
-  // const getAccountList = async () => {
-  //   const data = await fetcher({
-  //     url: `/api/account?mallId=${mallId}`,
-  //     method: 'GET'
-  //   })
-  //   setAccountList(data)
-  // }
-
-  // useEffect(() => {
-  //   getAccountList()
-  // }, [])
 
   return (
     <>
