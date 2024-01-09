@@ -3,14 +3,12 @@
 @tailwind utilities;
 
 :root {
-  /* --nextui-background: 0 0% 0%; */
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
 }
 
 html {
-  /* font-size: 4px; */
   color: hsl(var(--nextui-foreground))
 }
 body {
@@ -27,6 +25,5 @@ body {
 
 body {
   color: rgb(var(--nextui-foreground));
-  /* background: hsl(var(--nextui-background)/var(1,var(--tw-bg-opacity))); */
   background-color: (var(--nextui-background)/var(--nextui-background-opacity,var(--tw-bg-opacity)))
 }

@@ -1,7 +1,7 @@
 import { JsonBinData } from '@/types/ui'
 import { AutoParkFeeInfo } from 'components/func/ParkFeeInfo'
 import { FC } from 'react'
-import { cosDb } from 'utils/db'
+import { jsonBinDb } from 'utils/db'
 
 interface pageProps {
   params: {
@@ -11,7 +11,7 @@ interface pageProps {
 
 const page: FC<pageProps> = async ({ params }) => {
   const [mallId, queryPlateNo] = params.info || []
-  const jsonBinData: JsonBinData = await cosDb.getObjectDefault(`.`)
+  const jsonBinData: JsonBinData = await jsonBinDb.getObjectDefault(`.`)
   const { mallWithAccount = {}, usingAccount = {} } = jsonBinData || {}
   const mallConfig = mallWithAccount[mallId]
   console.log('jsonBinData =>', jsonBinData)

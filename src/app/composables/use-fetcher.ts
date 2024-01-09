@@ -33,9 +33,9 @@ export const fetcher = async (args: FetchRequest) => {
   // 如果 url 没有请求头，就加上
   if (!url.includes('http')) {
     // let isDev = false
-    const prefix = 'https://mallcoo-parking.vercel.app/'
+    // const prefix = 'https://mallcoo-parking.vercel.app/'
     // const prefix = 'https://mallcoo-parking.zeabur.app/'
-    // const prefix = 'http://localhost:3000/'
+    const prefix = 'http://localhost:3000/'
     // try {
     //   // 判断是否是本地开发环境
     //   isDev = process.env.NEXT_ENV === 'development'
@@ -62,7 +62,7 @@ export const fetcher = async (args: FetchRequest) => {
     ...args
   })
     .then((res) => {
-      console.log(`${url} fetch res =>`, res)
+      // console.log(`${url} fetch res =>`, res)
       return res.json()
     })
     .catch((err) => {
