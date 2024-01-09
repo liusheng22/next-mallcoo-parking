@@ -12,15 +12,15 @@ const EffectSwr: FC = () => {
     url: 'https://www.fastmock.site/mock/6345ad1b8161c2b06ef04f23db6c1b1e/mock/info'
   })
   const { data: dataInfo } = resData || {}
-  if (error) { return (createElement('div', null, 'Loading...')) }
+  if (error) {
+    return createElement('div', null, 'Loading...')
+  }
 
   useEffect(() => {
     setData(dataInfo)
   }, [dataInfo])
 
-  return <div>
-    swr: {JSON.stringify(data)}
-  </div>
+  return <div>swr: {JSON.stringify(data)}</div>
 }
 
 export default EffectSwr
