@@ -33,10 +33,6 @@ export const fetchGetProIndexList: any = async (query: PayInfo) => {
 // 领取优惠券
 export const fetchReceiveCoupon: any = async (query: any) => {
   const { MallID, ID, Name, projectType, token } = query || {}
-  // const { Token, ProjectType } = (await fetchLoginForThirdV2({
-  //   openId,
-  //   mallId: MallID
-  // })) as MallcooData
   const url = 'https://m.mallcoo.cn/api/hui/Promotion/ReceiveCoupon'
 
   const params = {
@@ -46,7 +42,6 @@ export const fetchReceiveCoupon: any = async (query: any) => {
     PromotionName: Name, // 优惠券Name
     Header: {
       Token: `${token},${projectType}`
-      // Token: `${Token},${ProjectType}`
     }
   }
 

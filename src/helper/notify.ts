@@ -1,5 +1,7 @@
+import notifyJson from '@/json/notify.json'
 import { MallcooData } from '@/types/mallcoo'
 import dayjs from 'dayjs'
+const { pushKey } = notifyJson || {}
 
 /**
  * 发送通知
@@ -7,7 +9,6 @@ import dayjs from 'dayjs'
  * @param {*} content 通知的内容
  */
 const sendNotify = async (title: string, content: string) => {
-  const pushKey = 'PDU20224T8VH7ZClnAJwtFkXFB55uF9bgnNzmm81w'
   const url = `https://api2.pushdeer.com/message/push?pushkey=${pushKey}&text=${title}&desp=${content}&type=markdown`
 
   return await fetch(url)

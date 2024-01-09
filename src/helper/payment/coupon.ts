@@ -1,15 +1,20 @@
+import { PayInfo } from '@/types/ui'
 import mallcooFetcher from '@/utils/wrapper-mallcoo'
 
 // 获取已领取的优惠券列表
-export const fetchGetNotAboutToExpireCoupon: any = async (uid: string, plateNo: string) => {
-  const url = 'https://m.mallcoo.cn/a/coupon/API/mycoupon/GetNotAboutToExpireCoupon'
+export const fetchGetNotAboutToExpireCoupon: (
+  query: PayInfo
+) => Promise<any> = async (query) => {
+  const { mallId, projectType, token } = query || {}
+  const url =
+    'https://m.mallcoo.cn/a/coupon/API/mycoupon/GetNotAboutToExpireCoupon'
 
   const params = {
     MinID: 0,
     PageSize: 10,
-    MallID: 11707,
+    MallID: mallId,
     Header: {
-      Token: '4LccDiWtH0y3xXTDddprVA0Rj5rxObr0,16706'
+      Token: `${token},${projectType}`
     }
   }
 

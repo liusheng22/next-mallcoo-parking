@@ -1,7 +1,7 @@
 import { MallcooData, PaymentParams } from '@/types/mallcoo'
 import { AccountItem } from '@/types/ui'
 import { fetcher } from 'app/composables/use-fetcher'
-import { cosDb } from 'utils/db'
+import { jsonBinDb } from 'utils/db'
 import { sendFailNotify, sendSuccessNotify } from '../notify'
 import { rightsFilter } from '../rights-filter'
 import { fetchDiscountCoreQuery } from './discount'
@@ -123,7 +123,7 @@ const payment: (params: PaymentParams) => Promise<any> = async (params) => {
       // 清空支付账号信息
       if (accountTotal - index - 1 === 0) {
         console.log('所有账号支付完成，清空缓存')
-        cosDb.delete(`.usingAccount.${plateNo}`)
+        jsonBinDb.delete(`.usingAccount.${plateNo}`)
       }
     } else {
       sendSuccessNotify({
@@ -133,11 +133,12 @@ const payment: (params: PaymentParams) => Promise<any> = async (params) => {
 
       // 更新该支付账号的信息
       const currentMallAccountList: AccountItem[] =
-        (await cosDb.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
+        (await jsonBinDb.getObjectDefault(`.mallWithAccount.${mallId}.list`)) ||
+        []
       const paidIndex = currentMallAccountList.findIndex(
         (item) => item.openId === openId
       )
-      await cosDb.push(
+      await jsonBinDb.push(
         `.mallWithAccount.${mallId}.list[${paidIndex}].isPaid`,
         true,
         true
@@ -154,15 +155,6 @@ const payment: (params: PaymentParams) => Promise<any> = async (params) => {
     })
     return [false, { payResMsg }]
   }
-  // } else {
-  //   payResMsg = '支付信息获取失败'
-  //   sendFailNotify({
-  //     PayTimes: index + 1,
-  //     ...parkingInfo,
-  //     Remark: payResMsg
-  //   })
-  //   return [false, { payResMsg }]
-  // }
 }
 
 export default payment

@@ -6,7 +6,6 @@ interface DiscountCoreQueryParams extends AccountItem, CarConfig {
   plateNo: string
   loginForToken: string
   rights: any
-  // rightsRuleModelList: Record<string, any>[]
 }
 
 // 缴纳车费，n小时内免费的才可成功
