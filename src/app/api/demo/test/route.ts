@@ -4,7 +4,7 @@ import { getQuery } from 'utils/api-route'
 
 export async function GET(req: NextRequest) {
   const query = getQuery(req)
-  console.log('getMallcooApi query =>', query)
+  console.log('test api query =>', query)
 
   return success(query, { crossDomain: true })
 }

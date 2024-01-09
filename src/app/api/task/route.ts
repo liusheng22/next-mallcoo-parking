@@ -1,8 +1,8 @@
-import { success } from '@/helper/response'
-import { initAccount, initSchedule } from '@/libs/account'
+import { success } from 'helper/response'
+import { initAccount, initSchedule } from 'libs/account'
 import { NextRequest } from 'next/server'
 import { getQuery } from 'utils/api-route'
-import { cosDb } from 'utils/db'
+import { jsonBinDb } from 'utils/db'
 
 export async function GET(req: NextRequest) {
   const { mallId, parkId, projectType } = getQuery(req)
@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const query = await req.json()
-  await cosDb.initBin()
+  await jsonBinDb.initBin()
   initSchedule()
 
   return success(query)

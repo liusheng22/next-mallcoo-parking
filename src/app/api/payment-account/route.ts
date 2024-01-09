@@ -10,7 +10,7 @@ import { AccountItem, CarConfig, PayInfo } from '@/types/ui'
 import dayjs from 'dayjs'
 import { NextRequest } from 'next/server'
 import { getQueryValue } from 'utils/api-route'
-import { cosDb } from 'utils/db'
+import { jsonBinDb } from 'utils/db'
 
 // 存储自动缴费的账号信息
 const setPaymentAccount = async (body: any) => {
@@ -55,7 +55,7 @@ const setPaymentAccount = async (body: any) => {
     // 自动缴费的账号列表
     list: selectAccountList
   }
-  await cosDb.push(
+  await jsonBinDb.push(
     '.usingAccount',
     {
       [plateNo]: carConfig
@@ -81,7 +81,7 @@ const paymentSchedule = async (query: PayInfo) => {
   const { mallId, plateNo, entryTime } = query
   const schedule = new ScheduleHelper()
 
-  const carConfig: CarConfig = await cosDb.getObjectDefault(
+  const carConfig: CarConfig = await jsonBinDb.getObjectDefault(
     `.usingAccount.${plateNo}`
   )
   const { freeMin } = carConfig || {}
@@ -90,10 +90,11 @@ const paymentSchedule = async (query: PayInfo) => {
   // 定时执行的任务
   const paymentTask = async () => {
     const usingList: AccountItem[] =
-      (await cosDb.getObjectDefault(`.usingAccount.${plateNo}.list`, [])) || []
-    // // 找到第一个未支付的账号
+      (await jsonBinDb.getObjectDefault(`.usingAccount.${plateNo}.list`, [])) ||
+      []
+    // 找到第一个未支付的账号
     const account = usingList.find((item) => !item.isPaid)
-    // // 找到 index
+    // 找到 index
     const index = usingList.findIndex((item) => !item.isPaid)
 
     if (!account) {
@@ -126,23 +127,24 @@ const paymentSchedule = async (query: PayInfo) => {
       const nextAccount = usingList[nextIndex]
       // 更新账号状态
       const currentTime = dayjs().format('YYYY:MM:DD HH:mm:ss')
-      await cosDb.push(
+      await jsonBinDb.push(
         `.usingAccount.${plateNo}.list[${index}].isPaid`,
         true,
         true
       )
-      await cosDb.push(
+      await jsonBinDb.push(
         `.usingAccount.${plateNo}.list[${index}].time`,
         currentTime,
         true
       )
       // 更新商场下的账号状态
       const currentMallAccountList: AccountItem[] =
-        (await cosDb.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
+        (await jsonBinDb.getObjectDefault(`.mallWithAccount.${mallId}.list`)) ||
+        []
       const paidIndex = currentMallAccountList.findIndex(
         (item) => item.openId === account.openId
       )
-      await cosDb.push(
+      await jsonBinDb.push(
         `.mallWithAccount.${mallId}.list[${paidIndex}].isPaid`,
         true,
         true
@@ -152,30 +154,31 @@ const paymentSchedule = async (query: PayInfo) => {
       } else {
         schedule.cancelTask(plateNo as string)
         // 清空支付账号信息
-        await cosDb.delete(`.usingAccount.${plateNo}`)
+        await jsonBinDb.delete(`.usingAccount.${plateNo}`)
       }
       return false
     }
 
     // 更新账号状态
     const currentTime = dayjs().format('YYYY:MM:DD HH:mm:ss')
-    await cosDb.push(
+    await jsonBinDb.push(
       `.usingAccount.${plateNo}.list[${index}].isPaid`,
       true,
       true
     )
-    await cosDb.push(
+    await jsonBinDb.push(
       `.usingAccount.${plateNo}.list[${index}].time`,
       currentTime,
       true
     )
 
     const currentMallAccountList: AccountItem[] =
-      (await cosDb.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
+      (await jsonBinDb.getObjectDefault(`.mallWithAccount.${mallId}.list`)) ||
+      []
     const paidIndex = currentMallAccountList.findIndex(
       (item) => item.openId === account.openId
     )
-    await cosDb.push(
+    await jsonBinDb.push(
       `.mallWithAccount.${mallId}.list[${paidIndex}].isPaid`,
       true,
       true
@@ -214,15 +217,11 @@ const paymentSchedule = async (query: PayInfo) => {
   }
   addMin()
   console.log('启动定时任务时间: ', dayjs(time).format('YYYY:MM:DD HH:mm:ss'))
-  // const now = dayjs().valueOf()
-  // if (time < now) {
-  //   time = dayjs(time).add(min, 'minute').valueOf()
-  // }
 
   schedule.createTask(
     {
       name: plateNo as string,
-      // schedule: new Date(Date.now() + 5000),
+      // schedule: new Date(Date.now() + 5000), // test
       // 在入场时间的基础上，+min 然后执行一次
       schedule: new Date(time),
       task: paymentTask
@@ -241,7 +240,7 @@ export async function GET(req: NextRequest) {
     return failed()
   }
 
-  const list = (await cosDb.getObjectDefault(
+  const list = (await jsonBinDb.getObjectDefault(
     `.usingAccount.${plateNo}.list`,
     []
   )) as AccountItem[]
@@ -251,13 +250,10 @@ export async function GET(req: NextRequest) {
 
 // 设置自动缴费的账号信息
 export async function POST(req: NextRequest) {
-  // const { mallId, parkId, projectType, plateNo, selectAccountList } =
-  //   (await req.json()) || {}
-
   const { selected, plateNo, mallId, parkId, projectType } = await req.json()
 
   const currentMallAccountList: AccountItem[] =
-    (await cosDb.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
+    (await jsonBinDb.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
 
   const selectAccountList = currentMallAccountList
     .filter((item: AccountItem) => {
@@ -278,6 +274,7 @@ export async function POST(req: NextRequest) {
     selectAccountList
   }
 
+  // 复杂类型数据接收
   // const body = await postText2Json(req)
   console.log('post payment-account api body =>', body)
 
@@ -319,7 +316,7 @@ export async function DELETE(req: NextRequest) {
   schedule.cancelTask(plateNo)
 
   const carConfig: CarConfig =
-    (await cosDb.getObjectDefault(`.usingAccount.${plateNo}`)) || {}
+    (await jsonBinDb.getObjectDefault(`.usingAccount.${plateNo}`)) || {}
   console.log('carConfig =>', carConfig)
   const { mallId, list } = carConfig
   const accountList = list || []
@@ -329,23 +326,24 @@ export async function DELETE(req: NextRequest) {
   for (const item of unpaidList) {
     const { openId } = item
     const currentMallAccountList: AccountItem[] =
-      (await cosDb.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
+      (await jsonBinDb.getObjectDefault(`.mallWithAccount.${mallId}.list`)) ||
+      []
     const paidIndex = currentMallAccountList.findIndex(
       (item) => item.openId === openId
     )
-    await cosDb.push(
+    await jsonBinDb.push(
       `.mallWithAccount.${mallId}.list[${paidIndex}].isPaid`,
       false,
       true
     )
-    await cosDb.push(
+    await jsonBinDb.push(
       `.mallWithAccount.${mallId}.list[${paidIndex}].isSelected`,
       false,
       true
     )
   }
 
-  await cosDb.delete(`.usingAccount.${plateNo}`)
+  await jsonBinDb.delete(`.usingAccount.${plateNo}`)
 
   return success()
 }

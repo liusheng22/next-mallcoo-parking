@@ -1,10 +1,10 @@
-import { fetchGetParkFeeInit } from '@/helper/payment/park-fee'
-import { success } from '@/helper/response'
 import { AccountItem, JsonBinData } from '@/types/ui'
 import dayjs from 'dayjs'
+import { fetchGetParkFeeInit } from 'helper/payment/park-fee'
+import { success } from 'helper/response'
 import { NextRequest, NextResponse } from 'next/server'
 import { getQuery } from 'utils/api-route'
-import { cosDb } from 'utils/db'
+import { jsonBinDb } from 'utils/db'
 
 export async function GET(req: NextRequest) {
   const query = getQuery(req)
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
   if (EntryTime && dayjs(EntryTime).isValid()) {
     isWaitPay = true
   } else {
-    const jsonBinData: JsonBinData = await cosDb.getObjectDefault(`.`)
+    const jsonBinData: JsonBinData = await jsonBinDb.getObjectDefault(`.`)
     const { mallWithAccount = {}, usingAccount = {} } = jsonBinData || {}
     const mallConfig = mallWithAccount[mallId]
     let { list: accountList } = mallConfig || {}
@@ -34,30 +34,14 @@ export async function GET(req: NextRequest) {
 
     const carConfig = usingAccount[plateNo]
     let { list: paymentAccountList } = carConfig || {}
-    paymentAccountList = paymentAccountList || []
-
     // 无待缴费的车辆信息，清空 db 中的车辆信息
-    // const paymentAccountList = (await cosDb.getObjectDefault(
-    //   `.usingAccount.${plateNo}.list`,
-    //   []
-    // )) as AccountItem[]
+    paymentAccountList = paymentAccountList || []
     // 未使用的账号
     const unUsedOpenIdList = paymentAccountList
       .filter((item: AccountItem) => !item.isPaid)
       .map((item: AccountItem) => item.openId)
-    // 反哺到原始数据
-    // const accountList: AccountItem[] =
-    //   (await cosDb.getObjectDefault(`.mallWithAccount.${mallId}.list`)) || []
-    // const list = accountList.map((item: AccountItem) => {
-    //   if (unUsedOpenIdList.includes(item.openId)) {
-    //     return {
-    //       ...item,
-    //       isSelected: false
-    //     }
-    //   }
-    //   return item
-    // })
 
+    // 反哺到原始数据
     const list = (accountList || []).map((item: AccountItem) => {
       if (unUsedOpenIdList.includes(item.openId)) {
         return {
@@ -69,11 +53,8 @@ export async function GET(req: NextRequest) {
     })
 
     // 重新设置 .accountList
-    // await cosDb.push(`.mallWithAccount.${mallId}.list`, list, true)
-    // await cosDb.delete(`.usingAccount.${plateNo}`)
-
-    await cosDb.push(`.mallWithAccount.${mallId}.list`, list, true)
-    cosDb.delete(`.usingAccount.${plateNo}`)
+    await jsonBinDb.push(`.mallWithAccount.${mallId}.list`, list, true)
+    jsonBinDb.delete(`.usingAccount.${plateNo}`)
   }
 
   return success({

@@ -6,7 +6,7 @@ import { AccountItem } from '@/types/ui'
 import { fetcher } from 'app/composables/use-fetcher'
 import { NextRequest } from 'next/server'
 import { getQuery } from 'utils/api-route'
-import { cosDb } from 'utils/db'
+import { jsonBinDb } from 'utils/db'
 
 // 领取优惠券
 const postMallcooHuiApi = async (data: any) => {
@@ -19,22 +19,8 @@ const postMallcooHuiApi = async (data: any) => {
 
 // 查询可以领取的优惠券
 export async function GET(req: NextRequest) {
-  // const searchParams = new URLSearchParams(req.nextUrl.searchParams)
-  // const plateNo = searchParams.get('plateNo')
-  // const mallId = getQueryValue(req, 'mallId')
-  // const token = getQueryValue(req, 'token')
-
-  // const url = `/api/mallcoo/hui?mallId=${req.query.mallId}&token=${req.query.token}`
-  // fetcher({ url })
-
-  // const mallId = getQueryValue(req, 'mallId') as string
-  // const plateNo = getQueryValue(req, 'plateNo') as string
-  // // const queryOpenId = getQueryValue(req, 'openId') as string
-  // const openId = getQueryValue(req, 'openId') as string
-
   const { mallId, plateNo, openId } = getQuery(req)
   const { projectType } = mallInfo(mallId)
-  // const { openId } = defaultAccountListByMall(mallId)
   const { Token: token } = await fetchLoginForThirdV2({ openId, mallId })
   const { PromotionModelList = [] } = await fetchGetProIndexList({
     mallId,
@@ -42,7 +28,6 @@ export async function GET(req: NextRequest) {
     projectType
   })
   console.log('可领取优惠列表 =>', PromotionModelList)
-  // POST(PromotionModelList)
   const list = PromotionModelList.map((item: any) => {
     const { MallID, ID, Name } = item
     return {
@@ -75,7 +60,7 @@ export async function POST(req: NextRequest) {
     list = []
   } = query || {}
   const accountList: AccountItem[] =
-    (await cosDb.getObjectDefault(`.usingAccount.${plateNo}.list`)) || []
+    (await jsonBinDb.getObjectDefault(`.usingAccount.${plateNo}.list`)) || []
   if (queryOpenId) {
     // 某些优惠券需要领取两次
     for (const item of list) {
