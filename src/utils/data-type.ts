@@ -52,7 +52,13 @@ const type = (obj: any) => {
 }
 
 export {
-  isArray, isBoolean, isFunction, isNull, isObject, isString, isUndefined, isValue,
+  isArray,
+  isBoolean,
+  isFunction,
+  isNull,
+  isObject,
+  isString,
+  isUndefined,
+  isValue,
   type
 }
-
