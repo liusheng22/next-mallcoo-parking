@@ -1,3 +1,3 @@
-// declare module 'antd-mobile' {
-//   export * from 'antd-mobile/es';
-// }
+declare interface KeyValue {
+  [key: string]: any
+}

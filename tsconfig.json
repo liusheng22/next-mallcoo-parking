@@ -15,6 +15,7 @@
       "app/*": ["./src/app/*"],
       "styles/*": ["./src/styles/*"],
       "utils/*": ["./src/utils/*"],
+      "libs/*": ["./src/libs/*"],
       "constants/*": ["./src/constants/*"],
       "helper/*": ["./src/helper/*"],
       "images/*": ["./src/images/*"],

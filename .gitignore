@@ -36,4 +36,5 @@ next-env.d.ts
 
 # self file
 local-db.json
-mall-with-account.json
+/src/json/*.json
+!/src/json/*.template.json
