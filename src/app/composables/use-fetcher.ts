@@ -51,7 +51,6 @@ export const fetcher = async (args: FetchRequest) => {
     // }
 
     args.url = `${prefix}${url}`
-    // args.url = `http://localhost:3000${url}`
   }
 
   // 使用 fetch 进行请求
