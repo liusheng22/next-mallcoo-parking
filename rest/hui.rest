@@ -1,5 +1,2 @@
 ###
 get {{baseUrl}}/api/demo/hui?mallId=11707
-
-
-暂停/播放 - 拖动
